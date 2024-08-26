@@ -1,14 +1,11 @@
-from django.shortcuts import render
-from .models import Report, User
-from django.http import HttpResponse, JsonResponse
+from .models import Report, User, License
+from django.http import JsonResponse
 # Create your views here.
 
-
-def Listar_user(request):
-    users = User.objects.all()
-    return JsonResponse({'users': list(users.values())})
+from rest_framework import viewsets
+from .serializers import ReportSerializer
 
 
-def Listar_reportes(request):
-    reportes = Report.objects.all()
-    return JsonResponse({'reportes': list(reportes.values())})
+class ReportViewSet(viewsets.ModelViewSet):
+    serializer_class = ReportSerializer
+    queryset = Report.objects.all()
