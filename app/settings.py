@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'backend',
     'rest_framework',
     'corsheaders',
+    'coreapi',
 ]
 
 
@@ -137,3 +138,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:8000"
 ]
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+}
