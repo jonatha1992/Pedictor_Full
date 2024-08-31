@@ -1,0 +1,34 @@
+{
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.autopep8",
+        "editor.formatOnSave": true,
+        "editor.rulers": [
+            140
+        ],
+    },
+    "autopep8.args": [
+        "--max-line-length=140",
+        "--aggressive",
+        "--aggressive"
+    ],
+    "peacock.color": "#703ad3",
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#8e64dc",
+        "activityBar.background": "#8e64dc",
+        "activityBar.foreground": "#e7e7e7",
+        "activityBar.inactiveForeground": "#e7e7e799",
+        "activityBarBadge.background": "#e8b397",
+        "activityBarBadge.foreground": "#15202b",
+        "commandCenter.border": "#e7e7e799",
+        "sash.hoverBorder": "#8e64dc",
+        "statusBar.background": "#703ad3",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#8e64dc",
+        "statusBarItem.remoteBackground": "#703ad3",
+        "statusBarItem.remoteForeground": "#e7e7e7",
+        "titleBar.activeBackground": "#703ad3",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveBackground": "#703ad399",
+        "titleBar.inactiveForeground": "#e7e7e799"
+    }
+}
