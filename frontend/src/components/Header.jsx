@@ -1,12 +1,21 @@
-// src/components/Header.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import esp from "../assets/esp.png";
 import eng from "../assets/eng.png";
+import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
   const { t, i18n } = useTranslation();
+  const { logout, user } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
@@ -33,12 +42,21 @@ const Header = () => {
             </a>
           </li>
           <li>
-            <Link
-              to="/login"
-              className="bg-secondary px-4 py-2 rounded hover:bg-highlight transition-colors"
-            >
-              {t("Login")}
-            </Link>
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className="bg-secondary px-4 py-2 rounded hover:bg-highlight transition-colors"
+              >
+                {t("Logout")}
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="bg-secondary px-4 py-2 rounded hover:bg-highlight transition-colors"
+              >
+                {t("Login")}
+              </Link>
+            )}
           </li>
         </ul>
         <div className="flex space-x-2 ml-4">
