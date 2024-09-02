@@ -1,3 +1,4 @@
+CREATE DATABASE Predictor;
 
 -- Insert dummy data into Users table
 INSERT INTO users (name, email, password)
