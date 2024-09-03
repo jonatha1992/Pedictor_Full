@@ -11,10 +11,10 @@ def get_user(firebase_token):
         decoded_token = auth.verify_id_token(firebase_token)
         uid = decoded_token['uid']
         email = decoded_token.get('email')
-        user, _ = User.objects.get_or_create(email=email, defaults={'name': email})
+        user, created = User.objects.get_or_create(email=email, defaults={'username': email})
         return user
-    except BaseException:
-        return None
+    except Exception as e:
+        raise AuthenticationFailed(f'Invalid token: {str(e)}')
 
 
 class FirebaseAuthenticationMiddleware:
@@ -26,6 +26,5 @@ class FirebaseAuthenticationMiddleware:
         if auth_header and auth_header.startswith('Bearer '):
             firebase_token = auth_header.split('Bearer ')[1]
             request.user = SimpleLazyObject(lambda: get_user(firebase_token))
-
         response = self.get_response(request)
         return response
