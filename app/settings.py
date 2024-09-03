@@ -54,7 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'backend.middleware.FirebaseAuthenticationMiddleware',  # Asegúrate de que esté escrito exactamente así
+    # 'backend.middleware.FirebaseAuthenticationMiddleware',  # habilitar para autenticar con firebase
 
 ]
 
@@ -144,19 +144,27 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
-FIREBASE_CONFIG = os.path.join(BASE_DIR, 'key.json')
+# FIREBASE_CONFIG = os.path.join(BASE_DIR, 'key.json')
 
 
-AUTHENTICATON_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-]
+# AUTHENTICATON_BACKENDS = [
+#     'django.contrib.auth.backends.ModelBackend',
+# ]
+
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.SessionAuthentication',
+#         'rest_framework.authentication.BasicAuthentication',
+#     ],
+#     'DEFAULT_PERMISSION_CLASSES': [
+#         'rest_framework.permissions.IsAuthenticated',
+#     ],
+# }
+
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
     ],
 }
