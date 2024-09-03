@@ -1,8 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 
-# Create your models here.
-
 
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None):
@@ -21,7 +19,7 @@ class User(AbstractBaseUser):
     id_user = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     email = models.EmailField(max_length=100, unique=True)
-    password = models.CharField(max_length=100)  # Django maneja la contraseña automáticamente
+    password = models.CharField(max_length=100)
 
     objects = UserManager()
 
