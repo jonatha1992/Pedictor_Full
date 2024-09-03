@@ -17,7 +17,7 @@ const Login = () => {
     setError("");
     try {
       await login(user.email, user.password);
-      navigate("/");
+      navigate("/predict");
     } catch (error) {
       setError(error.message);
     }

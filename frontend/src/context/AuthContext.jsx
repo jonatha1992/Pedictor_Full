@@ -39,6 +39,13 @@ export function AuthProvider({ children }) {
 
   const resetPassword = async (email) => sendPasswordResetEmail(auth, email);
 
+  const getUserToken = async () => {
+    if (auth.currentUser) {
+      return await auth.currentUser.getIdToken(/* forceRefresh */ true);
+    }
+    throw new Error("No authenticated user found");
+  };
+
   useEffect(() => {
     const unsubuscribe = onAuthStateChanged(auth, (currentUser) => {
       console.log({ currentUser });
@@ -58,6 +65,8 @@ export function AuthProvider({ children }) {
         loading,
         loginWithGoogle,
         resetPassword,
+        onAuthStateChanged,
+        getUserToken,
       }}
     >
       {children}

@@ -9,6 +9,7 @@ import FAQs from "./components/FAQs";
 import Footer from "./components/Footer";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import Predict from "./components/Predict";
 
 const Home = () => (
   <>
@@ -28,6 +29,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/predict" element={<Predict />} />
         </Routes>
         <Footer />
       </div>
