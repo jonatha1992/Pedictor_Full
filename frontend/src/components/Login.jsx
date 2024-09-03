@@ -1,14 +1,49 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { Alert } from "./Alert";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+  });
+  const { login, loginWithGoogle, resetPassword } = useAuth();
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Aquí iría la lógica para manejar el inicio de sesión
-    console.log("Login attempt with:", email, password);
+    setError("");
+    try {
+      await login(user.email, user.password);
+      navigate("/");
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const handleChange = ({ target: { value, name } }) =>
+    setUser({ ...user, [name]: value });
+
+  const handleGoogleSignin = async () => {
+    try {
+      await loginWithGoogle();
+      navigate("/");
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    if (!user.email) return setError("Write an email to reset password");
+    try {
+      await resetPassword(user.email);
+      setError("We sent you an email. Check your inbox");
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   return (
@@ -19,23 +54,23 @@ const Login = () => {
             Iniciar sesión
           </h2>
         </div>
+        {error && <Alert message={error} />}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <input type="hidden" name="remember" value="true" />
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="email-address" className="sr-only">
+              <label htmlFor="email" className="sr-only">
                 Correo electrónico
               </label>
               <input
-                id="email-address"
+                id="email"
                 name="email"
                 type="email"
                 autoComplete="email"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
                 placeholder="Correo electrónico"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleChange}
               />
             </div>
             <div>
@@ -50,8 +85,7 @@ const Login = () => {
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
                 placeholder="Contraseña"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -76,6 +110,12 @@ const Login = () => {
             </button>
           </div>
         </form>
+        <button
+          onClick={handleGoogleSignin}
+          className="bg-slate-50 hover:bg-slate-200 text-black  shadow rounded border-2 border-gray-300 py-2 px-4 w-full"
+        >
+          Google login
+        </button>
         <div className="text-center">
           <p className="mt-2 text-sm text-gray-600">
             ¿No tienes una cuenta?{" "}

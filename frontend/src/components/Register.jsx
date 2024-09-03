@@ -1,5 +1,7 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { Alert } from "./Alert";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +11,8 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   });
+  const { signup } = useAuth();
+  const navigate = useNavigate();
 
   const [errors, setErrors] = useState({});
 
@@ -42,13 +46,16 @@ const Register = () => {
     return Object.keys(tempErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      // Aquí iría la lógica para enviar los datos al servidor
-      console.log("Formulario válido:", formData);
-    } else {
-      console.log("Formulario inválido");
+      try {
+        await signup(formData.email, formData.password);
+        navigate("/");
+      } catch (error) {
+        console.error(error);
+        setErrors({ general: "Error al registrar el usuario" });
+      }
     }
   };
 
@@ -60,6 +67,7 @@ const Register = () => {
             Registro de Usuario
           </h2>
         </div>
+        {errors.general && <Alert message={errors.general} />}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
