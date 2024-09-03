@@ -13,7 +13,7 @@ const Predict = () => {
         const idToken = await getUserToken();
         console.log(idToken);
         // Realizar la solicitud GET con el token en el encabezado
-        const response = await fetch("http://127.0.0.1:8000", {
+        const response = await fetch("http://127.0.0.1:8000/api/v1", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
