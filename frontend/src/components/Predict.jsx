@@ -1,71 +1,46 @@
 import React, { useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
+import backgroundImage from "../assets/tablero.webp"; // Asegúrate de ajustar la ruta según la ubicación de tu imagen
+import backgroundImage1 from "../assets/tablero1.jpg"; // Asegúrate de ajustar la ruta según la ubicación de tu imagen
+import Probabilidades from "./Probabilidades";
 
 const Predict = () => {
-  const { getUserToken, user } = useAuth(); // Obteniendo getUserToken y user desde el AuthContext
   const numbers = Array.from({ length: 37 }, (_, i) => i); // Array de 0 a 36
 
-  // Función para obtener datos usando el token de Firebase
-  const fetchDataWithToken = async () => {
-    try {
-      if (user) {
-        // Obtén el token de usuario
-        const idToken = await getUserToken();
-        console.log(idToken);
-        // Realizar la solicitud GET con el token en el encabezado
-        const response = await fetch("http://127.0.0.1:8000/api/v1", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${idToken}`, // Enviando el token en el encabezado
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log(data); // Maneja los datos de respuesta aquí
-        } else {
-          console.error("Error en la solicitud:", response.statusText);
-        }
-      } else {
-        console.error("No hay un usuario autenticado");
-      }
-    } catch (error) {
-      console.error("Error al obtener el token o hacer la solicitud:", error);
-    }
-  };
-
   // useEffect para llamar a fetchDataWithToken cuando se monte el componente
-  useEffect(() => {
-    fetchDataWithToken();
-  }, [user]);
+  useEffect(() => {}, []);
 
   return (
-    <div className="h-screen">
+    <div className="md:h-screen">
       {/* Parte superior dividida en dos columnas */}
-      <div className="h-1/2 flex">
-        <div className="w-1/2 bg-blue-200 p-4">
-          <h2>Columna 1</h2>
-          <p>Contenido de la primera columna.</p>
+      <div className="flex flex-col md:flex-row md:h-1/2">
+        <div className="w-full md:w-1/2">
+          <div
+            className="text-center py-20 text-white bg-cover bg-center h-full"
+            style={{ backgroundImage: `url(${backgroundImage1})` }}
+          ></div>
         </div>
-        <div className="w-1/2 bg-green-200 p-4">
-          <h2>Columna 2</h2>
-          <p>Contenido de la segunda columna.</p>
+        <div className="w-full md:w-1/2 bg-green-200">
+          <div
+            className="text-center text-white bg-cover bg-center h-full"
+            style={{ backgroundImage: `url(${backgroundImage1})` }}
+          >
+            <Probabilidades></Probabilidades>
+          </div>
         </div>
       </div>
 
       {/* Parte inferior con tres columnas */}
-      <div className=" p-4 bg-green-800">
-        <div className="flex flex-wrap md:flex-nowrap items-center">
+      <div className="p-4 bg-green-800 ">
+        <div className="flex flex-col md:flex-row items-center">
           {/* Columna 1 */}
-          <div className="w-full md:w-1/3 p-2">
-            <div className="grid md:grid-cols-4 grid-cols-3 gap-2 ">
+          <div className="w-full md:w-1/2 p-2 ">
+            <div className="grid md:grid-cols-10 grid-cols-5 gap-2">
               {/* Distribución de los números en la columna 1 */}
-              {numbers.slice(0, 13).map((num, index) => (
+              {numbers.slice(0, 37).map((num, index) => (
                 <div
                   key={index}
                   className={`col-span-1 text-center ${
-                    num === 0 ? "row-span-4" : ""
+                    num === 0 ? "md:row-span-4" : ""
                   }`}
                 >
                   <button
@@ -83,38 +58,20 @@ const Predict = () => {
               ))}
             </div>
           </div>
-          {/* Columna 2 */}
-          <div className="w-full md:w-1/3 p-2">
-            <div className="grid grid-cols-3 gap-2  p-2">
-              {/* Distribución de los números en la columna 2 */}
-              {numbers.slice(13, 25).map((num, index) => (
-                <div key={index} className="text-center">
-                  <button
-                    className={`w-full h-full p-2 rounded text-white ${
-                      index % 2 === 0 ? "bg-red-500" : "bg-black"
-                    }`}
-                  >
-                    {num}
-                  </button>
-                </div>
-              ))}
+          <div className="w-full md:w-1/2 p-2 flex h-full">
+            <div>
+              <p>Tipo de ruleta:</p>
+              <p>Cantidad de vecinos:</p>
+              <p>Limite de juego:</p>
+              <p>Umbral de probabilidad:</p>
             </div>
-          </div>
-          {/* Columna 3 */}
-          <div className="w-full md:w-1/3 p-2">
-            <div className="grid grid-cols-3 gap-2  p-2">
-              {/* Distribución de los números en la columna 3 */}
-              {numbers.slice(25).map((num, index) => (
-                <div key={index} className="text-center">
-                  <button
-                    className={`w-full h-full p-2 rounded text-white ${
-                      index % 2 === 0 ? "bg-red-500" : "bg-black"
-                    }`}
-                  >
-                    {num}
-                  </button>
-                </div>
-              ))}
+            <div className="flex flex-col">
+              <button className=" h-full p-2 rounded text-white bg-red-500">
+                iniciar Juego
+              </button>
+              <button className=" h-full p-2 rounded text-white bg-black ">
+                Reiniciar Juego
+              </button>
             </div>
           </div>
         </div>

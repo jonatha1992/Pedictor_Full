@@ -26,7 +26,7 @@ const Header = () => {
       <div className="text-lg font-bold">AppName</div>
       <nav className="flex items-center">
         <ul className="flex space-x-4">
-          <li>
+          {/*  <li>
             <a href="#features" className="hover:text-highlight">
               {t("Features")}
             </a>
@@ -40,7 +40,7 @@ const Header = () => {
             <a href="#faq" className="hover:text-highlight">
               {t("FAQ")}
             </a>
-          </li>
+          </li> */}
           <li>
             {user ? (
               <button
