@@ -11,15 +11,9 @@ const Predict = () => {
 
   return (
     <div className="md:h-screen">
-      {/* Parte superior dividida en dos columnas */}
-      <div className="flex flex-col md:flex-row md:h-1/2">
-        <div className="w-full md:w-1/2">
-          <div
-            className="text-center py-20 text-white bg-cover bg-center h-full"
-            style={{ backgroundImage: `url(${backgroundImage1})` }}
-          ></div>
-        </div>
-        <div className="w-full md:w-1/2 bg-green-200">
+
+      <div className="h-[50vh] md:h-1/2 flex">
+        <div className="w-full h-full md:w-1/2 bg-green-200">
           <div
             className="text-center text-white bg-cover bg-center h-full"
             style={{ backgroundImage: `url(${backgroundImage1})` }}
@@ -27,13 +21,19 @@ const Predict = () => {
             <Probabilidades></Probabilidades>
           </div>
         </div>
+        <div className="hidden md:block w-full md:w-1/2">
+          <div
+            className="text-center py-20 text-white bg-cover bg-center h-full"
+            style={{ backgroundImage: `url(${backgroundImage1})` }}
+          ></div>
+        </div>
       </div>
 
       {/* Parte inferior con tres columnas */}
-      <div className="p-4 bg-green-800 ">
-        <div className="flex flex-col md:flex-row items-center">
+      <div className="p-4 bg-green-800 md:h-1/2 md:flex md:flex-col md:justify-center  md:mt-0">
+        <div className="flex flex-col md:flex-row items-center ">
           {/* Columna 1 */}
-          <div className="w-full md:w-1/2 p-2 ">
+          <div className="w-full md:w-1/2 p-2 h-full overflow-y-auto">
             <div className="grid md:grid-cols-10 grid-cols-5 gap-2">
               {/* Distribución de los números en la columna 1 */}
               {numbers.slice(0, 37).map((num, index) => (
@@ -58,18 +58,18 @@ const Predict = () => {
               ))}
             </div>
           </div>
-          <div className="w-full md:w-1/2 p-2 flex h-full">
-            <div>
+          <div className="w-full md:w-1/2 p-2 flex  flex-row  justify-between md:justify-around">
+            <div className="text-end">
               <p>Tipo de ruleta:</p>
               <p>Cantidad de vecinos:</p>
               <p>Limite de juego:</p>
               <p>Umbral de probabilidad:</p>
             </div>
-            <div className="flex flex-col">
-              <button className=" h-full p-2 rounded text-white bg-red-500">
-                iniciar Juego
+            <div className="flex flex-col ">
+              <button className="mb-2 p-2 rounded text-white bg-red-500">
+                Iniciar Juego
               </button>
-              <button className=" h-full p-2 rounded text-white bg-black ">
+              <button className="p-2 rounded text-white bg-black">
                 Reiniciar Juego
               </button>
             </div>
