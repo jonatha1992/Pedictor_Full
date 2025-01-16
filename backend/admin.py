@@ -1,4 +1,5 @@
 from django.contrib import admin
+from backend.models import License, Report, User
 
 from backend.models import *
 
