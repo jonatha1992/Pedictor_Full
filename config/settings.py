@@ -160,11 +160,3 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',  # Permitir acceso público a la documentación
     ],
 }
-
-
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': [],
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.AllowAny',
-#     ],
-# }
