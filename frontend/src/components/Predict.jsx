@@ -43,7 +43,8 @@ const Predict = () => {
         <div className="flex flex-col md:flex-row items-center md:h-full">
           {/* Columna 1 */}
           <div className="w-full md:w-1/2 p-2 h-full overflow-y-auto ">
-            <div className="grid md:grid-cols-10 grid-cols-5 gap-2">
+          <div className="flex flex-col h-full justify-end">
+            <div className="grid md:grid-cols-10 grid-cols-5 gap-2 mb-20">
               {/* Distribución de los números en la columna 1 */}
               {numbers.slice(0, 37).map((num, index) => (
                 <div
@@ -65,6 +66,7 @@ const Predict = () => {
                   </button>
                 </div>
               ))}
+            </div>
             </div>
           </div>
          
