@@ -1,44 +1,7 @@
-import React, { useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
+import React from "react";
 
 const Predict = () => {
-  const { getUserToken, user } = useAuth(); // Obteniendo getUserToken y user desde el AuthContext
   const numbers = Array.from({ length: 37 }, (_, i) => i); // Array de 0 a 36
-
-  // Función para obtener datos usando el token de Firebase
-  const fetchDataWithToken = async () => {
-    try {
-      if (user) {
-        // Obtén el token de usuario
-        const idToken = await getUserToken();
-        console.log(idToken);
-        // Realizar la solicitud GET con el token en el encabezado
-        const response = await fetch("http://127.0.0.1:8000", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${idToken}`, // Enviando el token en el encabezado
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log(data); // Maneja los datos de respuesta aquí
-        } else {
-          console.error("Error en la solicitud:", response.statusText);
-        }
-      } else {
-        console.error("No hay un usuario autenticado");
-      }
-    } catch (error) {
-      console.error("Error al obtener el token o hacer la solicitud:", error);
-    }
-  };
-
-  // useEffect para llamar a fetchDataWithToken cuando se monte el componente
-  useEffect(() => {
-    fetchDataWithToken();
-  }, [user]);
 
   return (
     <div className="h-screen">
