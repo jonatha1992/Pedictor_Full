@@ -7,12 +7,17 @@ import Notificaciones from "./Notificaciones";
 const Predict = () => {
   const numbers = Array.from({ length: 37 }, (_, i) => i); // Array de 0 a 36
   const [notificaciones, setNotificaciones] = useState([]);
+  const [numerosSeleccionados, setNumerosSeleccionados] = useState([]); // Nuevo estado
 
   // useEffect para llamar a fetchDataWithToken cuando se monte el componente
   useEffect(() => {}, []);
 
   const agregarNotificacion = (mensaje) => {
     setNotificaciones(prev => [...prev, mensaje]);
+  };
+
+  const handleNumeroClick = (numero) => {
+    setNumerosSeleccionados(prev => [...prev, numero]);
   };
 
   return (
@@ -54,6 +59,7 @@ const Predict = () => {
                   }`}
                 >
                   <button
+                    onClick={() => handleNumeroClick(num)}
                     className={`w-full h-full p-2 rounded text-white ${
                       num === 0
                         ? "bg-green-500"
@@ -70,27 +76,23 @@ const Predict = () => {
             </div>
           </div>
          
-          <div className="w-full md:w-1/2 p-2 flex  flex-row  justify-between md:justify-around md:h-full">
-          <div className="md:h-full flex flex-col">
-          <div className="w-full md: p-2 flex flex-wrap justify-around md:ml-8 md:justify-content-start">
-            {[...Array(10)].map((_, index) => {
-              let randomNumber = Math.floor(Math.random() * 100) + 1;
-              while (numbers.includes(randomNumber)) {
-                randomNumber = Math.floor(Math.random() * 100) + 1;
-              }
-              numbers.push(randomNumber);
-              return (
-                <div key={index} className="p-2">
-                  <button className=" h-full  rounded text-white bg-blue-500">
-                    {randomNumber}
-                  </button>
-                </div>
-              );
-            })}
-          </div>
+          <div className="w-full md:w-1/2 p-2 flex flex-row justify-between md:justify-around md:h-full">
+            <div className="md:h-full flex flex-col w-full">
+              <div className="w-full md:p-2 flex overflow-x-auto whitespace-nowrap overflow-hidden" 
+                   style={{ scrollBehavior: 'smooth', borderRadius: '1rem', backgroundColor: '#7f1414ad' }} 
+                   ref={(el) => el?.scrollTo(0, 0)}>
+                <p className="text-white text-center flex items-center p2">Últimos resultados:</p>
+                {numerosSeleccionados.slice().reverse().map((numero, index) => (
+                  <div key={index} className="p-2 flex-shrink-0">
+                    <button className="h-full rounded text-white bg-blue-500 min-w-[40px]">
+                      {numero}
+                    </button>
+                  </div>
+                ))}
+              </div>
 
           
-          <div className="flex justify-around">
+          <div className="flex justify-around mt-4">
             <div className="text-end pr-8">
               <p>Tipo de ruleta:</p>
               <p>Cantidad de vecinos:</p>
