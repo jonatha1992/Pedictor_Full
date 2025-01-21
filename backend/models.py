@@ -20,11 +20,33 @@ class User(AbstractBaseUser):
     name = models.CharField(max_length=100)
     email = models.EmailField(max_length=100, unique=True)
     password = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']
+
+    @property
+    def license_info(self):
+        try:
+            user_license = self.user_license
+            return {
+                'key': user_license.license.key,
+                'expiration': user_license.valid_until,
+                'is_active': user_license.is_active,
+                'status': user_license.status
+            }
+        except UserLicense.DoesNotExist:
+            return None
+
+    @property
+    def has_active_license(self):
+        return hasattr(self, 'user_license') and self.user_license.is_active
+
+    @property
+    def licenses(self):
+        return UserLicense.objects.filter(user=self)
 
     class Meta:
         db_table = 'users'
@@ -32,12 +54,25 @@ class User(AbstractBaseUser):
 
 class License(models.Model):
     id_license = models.AutoField(primary_key=True)
-    key = models.CharField(max_length=100)
+    key = models.CharField(max_length=100, unique=True)
     date_expiration = models.DateField()
-    user = models.ForeignKey(User, related_name='licenses', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'licenses'
+
+
+class UserLicense(models.Model):
+    id_user_license = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_license')
+    license = models.ForeignKey(License, on_delete=models.CASCADE, related_name='user_licenses')
+    assigned_date = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    valid_until = models.DateTimeField()
+    status = models.CharField(max_length=50)  # active, suspended, expired
+    last_used = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'user_licenses'
 
 
 class Report(models.Model):
