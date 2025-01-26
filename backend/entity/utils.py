@@ -2,7 +2,6 @@ import os
 import sys
 
 
-
 def get_application_path():
     if getattr(sys, 'frozen', False):
         return sys._MEIPASS

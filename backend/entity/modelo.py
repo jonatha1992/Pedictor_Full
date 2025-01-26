@@ -4,6 +4,7 @@ import pandas as pd
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
+from utils import get_relative_path
 from vecinos import colores_ruleta, vecino1lugar, vecino2lugar, sector1, sector2, sector3, sector4, sector5, sector6
 from sklearn.preprocessing import LabelEncoder
 

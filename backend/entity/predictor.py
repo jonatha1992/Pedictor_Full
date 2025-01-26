@@ -3,14 +3,14 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 import os
-from contador import Contador
-from modelo import Modelo
+from .utils import get_relative_path
+from .contador import Contador
+from .modelo import Modelo
 from numero import NumeroJugar, NumeroHistorial  # Asegúrate de que las clases estén en módulos adecuados
 from datetime import datetime
 from parametro import HiperParametros, Parametro_Juego
 from vecinos import vecino1lugar, vecino2lugar, vecinos3lugar, Vecino4lugar, colores_ruleta
 from reporte import Reporte
-from config import get_relative_path
 import pprint
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
