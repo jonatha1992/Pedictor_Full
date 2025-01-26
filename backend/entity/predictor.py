@@ -6,11 +6,11 @@ import os
 from .utils import get_relative_path
 from .contador import Contador
 from .modelo import Modelo
-from numero import NumeroJugar, NumeroHistorial  # Asegúrate de que las clases estén en módulos adecuados
+from .numero import NumeroJugar, NumeroHistorial  # Asegúrate de que las clases estén en módulos adecuados
 from datetime import datetime
-from parametro import HiperParametros, Parametro_Juego
-from vecinos import vecino1lugar, vecino2lugar, vecinos3lugar, Vecino4lugar, colores_ruleta
-from reporte import Reporte
+from .parametro import HiperParametros, Parametro_Juego
+from .vecinos import vecino1lugar, vecino2lugar, vecinos3lugar, Vecino4lugar, colores_ruleta
+from .reporte import Reporte
 import pprint
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')

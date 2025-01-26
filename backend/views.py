@@ -72,23 +72,25 @@ class LicenseViewSet(mixins.CreateModelMixin,
 
 class PredictorInitView(APIView):
     def post(self, request):
-        # Initialize the predictor model
         filename = request.data.get('filename')
         parametros = request.data.get('parametros')
         hiperparametros = request.data.get('hiperparametros')
-
-        # Assuming you have a function to initialize the predictor
-        self.predictor = Predictor(filename, parametros, hiperparametros)
-
-        return Response({'message': 'Predictor initialized'}, status=Status.HTTP_200_OK)
+        apps.get_app_config('backend').predictor_crupier = Predictor(filename, parametros, hiperparametros)
+        apps.get_app_config('backend').predictor_electromecanica = Predictor(filename, parametros, hiperparametros)
+        return Response({'message': 'Predictors initialized'}, status=status.HTTP_200_OK)
 
 
-# class PredictView(APIView):
-#     def post(self, request):
-#         serializer = PredictSerializer(data=request.data)
-#         if serializer.is_valid():
-#             numeros = serializer.validated_data['numeros']
-#             # Assuming you have a method in Predictor to make predictions
-#             prediction = self.predictor.predecir(numeros)
-#             return Response({'prediction': prediction}, status=Status.HTTP_200_OK)
-#         return Response(serializer.errors, status=Status.HTTP_400_BAD_REQUEST)
+class PredictView(APIView):
+    def post(self, request):
+        serializer = PredictSerializer(data=request.data)
+        if serializer.is_valid():
+            numeros = serializer.validated_data['numeros']
+            predictor_crupier = apps.get_app_config('backend').predictor_crupier
+            predictor_electromecanica = apps.get_app_config('backend').predictor_electromecanica
+            prediction_crupier = predictor_crupier.predecir(numeros)
+            prediction_electromecanica = predictor_electromecanica.predecir(numeros)
+            return Response({
+                'prediction_crupier': prediction_crupier,
+                'prediction_electromecanica': prediction_electromecanica
+            }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
