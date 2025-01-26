@@ -118,7 +118,7 @@ class Modelo:
 
     def crear_y_guardar_modelos(self):
         modelo_nombre = f"Model_{self.filebasename}_N{self.hiperparametros.numerosAnteriores}"
-        modelo_path = get_relative_path(f"./Models/{modelo_nombre}.keras")
+        modelo_path = get_relative_path(f"./models/{modelo_nombre}.keras")
 
         if not os.path.exists(modelo_path):
             print(f"Creando modelo: {modelo_nombre}")
