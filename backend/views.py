@@ -1,3 +1,5 @@
+from drf_yasg import openapi
+from django.shortcuts import get_object_or_404
 from .models import Game
 from .serializers import GameSerializer
 from grpc import Status
@@ -18,34 +20,55 @@ firebase_creds = credentials.Certificate(settings.FIREBASE_CONFIG)
 firebase_app = firebase_admin.initialize_app(firebase_creds)
 
 
-class ReportAPIView(APIView):
-    permission_classes = [AllowAny]
+# class ReportAPIView(APIView):
+#     #     permission_classes = [AllowAny]
 
-    @swagger_auto_schema(operation_description="Listar todos los reportes")
-    def get(self, request):
-        reports = Report.objects.all()
-        serializer = ReportSerializer(reports, many=True)
-        return Response(serializer.data)
+#     #     @swagger_auto_schema(operation_description="Get all reports")
+#     #     def get_all(self, request):
+#     #         reports = Report.objects.all()
+#     #         serializer = ReportSerializer(reports, many=True)
+#     #         return Response(serializer.data)
 
-    @swagger_auto_schema(operation_description="Crear un nuevo reporte")
-    def post(self, request):
-        serializer = ReportSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     #     @swagger_auto_schema(operation_description="Get report by id")
+#     #     def get(self, request, report_id):
+#     #         try:
+#     #             report = Report.objects.get(id=report_id)
+#     #             serializer = ReportSerializer(report)
+#     #             return Response(serializer.data)
+#     #         except Report.DoesNotExist:
+#     #             return Response({'message': 'Report not found'}, status=status.HTTP_404_NOT_FOUND)
+
+#     #     @swagger_auto_schema(operation_description="Created a new report")
+#     #     def post(self, request):
+#     #         serializer = ReportSerializer(data=request.data)
+#     #         if serializer.is_valid():
+#     #             serializer.save()
+#     #             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#     #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     def get(self, request):
+#         id = request.query_params.get('id', None)
+#         if id:
+#             # Get by id
+#             report = get_object_or_404(Report, pk=id)
+#             serializer = ReportSerializer(report)
+#         else:
+#             # Get all
+#             reports = Report.objects.all()
+#             serializer = ReportSerializer(reports, many=True)
+#         return Response(serializer.data)
 
 
 class UserAPIView(APIView):
     permission_classes = [AllowAny]
 
-    @swagger_auto_schema(operation_description="Listar todos los usuarios")
+    @swagger_auto_schema(operation_description="Get all users")
     def get(self, request):
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
-    @swagger_auto_schema(operation_description="Crear un nuevo usuario")
+    @swagger_auto_schema(operation_description="Creted a new user")
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -57,13 +80,13 @@ class UserAPIView(APIView):
 class LicenseAPIView(APIView):
     permission_classes = [AllowAny]
 
-    @swagger_auto_schema(operation_description="Listar todas las licencias")
+    @swagger_auto_schema(operation_description="Get all licenses")
     def get(self, request):
         licenses = License.objects.all()
         serializer = LicenseSerializer(licenses, many=True)
         return Response(serializer.data)
 
-    @swagger_auto_schema(operation_description="Crear una nueva licencia")
+    @swagger_auto_schema(operation_description="Create a new license")
     def post(self, request):
         serializer = LicenseSerializer(data=request.data)
         if serializer.is_valid():
@@ -73,6 +96,8 @@ class LicenseAPIView(APIView):
 
 
 class GameInitView(APIView):
+
+    @swagger_auto_schema(operation_description="Create a new game")
     def post(self, request):
         # Get parameters from request
         data = request.data
@@ -91,3 +116,103 @@ class GameInitView(APIView):
                 'game_id': game.id_game
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(operation_description="Get all games")
+    def get(self, request):
+        games = Game.objects.all()
+        serializer = GameSerializer(games, many=True)
+        return Response(serializer.data)
+
+
+class ReportAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    @swagger_auto_schema(
+        operation_description="Get all reports or single report by id",
+        manual_parameters=[
+            openapi.Parameter(
+                'id',
+                openapi.IN_QUERY,
+                description="Report ID (optional)",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            )
+        ],
+        responses={
+            200: ReportSerializer(many=True),
+            404: 'Report not found'
+        }
+    )
+    def get(self, request):
+        id = request.query_params.get('id')
+        if id:
+            report = get_object_or_404(Report, pk=id)
+            serializer = ReportSerializer(report)
+        else:
+            reports = Report.objects.all()
+            serializer = ReportSerializer(reports, many=True)
+        return Response(serializer.data)
+
+    @swagger_auto_schema(
+        operation_description="Create a new report",
+        request_body=ReportSerializer,
+        responses={
+            201: ReportSerializer,
+            400: 'Bad Request'
+        }
+    )
+    def post(self, request):
+        serializer = ReportSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(
+        operation_description="Update a report",
+        request_body=ReportSerializer,
+        manual_parameters=[
+            openapi.Parameter(
+                'id',
+                openapi.IN_QUERY,
+                description="Report ID",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            )
+        ],
+        responses={
+            200: ReportSerializer,
+            400: 'Bad Request',
+            404: 'Report not found'
+        }
+    )
+    def put(self, request):
+        id = request.query_params.get('id')
+        report = get_object_or_404(Report, pk=id)
+        serializer = ReportSerializer(report, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(
+        operation_description="Delete a report",
+        manual_parameters=[
+            openapi.Parameter(
+                'id',
+                openapi.IN_QUERY,
+                description="Report ID",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            )
+        ],
+        responses={
+            204: 'No Content',
+            404: 'Report not found'
+        }
+    )
+    def delete(self, request):
+        id = request.query_params.get('id')
+        report = get_object_or_404(Report, pk=id)
+        report.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
