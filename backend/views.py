@@ -20,61 +20,98 @@ firebase_creds = credentials.Certificate(settings.FIREBASE_CONFIG)
 firebase_app = firebase_admin.initialize_app(firebase_creds)
 
 
-# class ReportAPIView(APIView):
-#     #     permission_classes = [AllowAny]
-
-#     #     @swagger_auto_schema(operation_description="Get all reports")
-#     #     def get_all(self, request):
-#     #         reports = Report.objects.all()
-#     #         serializer = ReportSerializer(reports, many=True)
-#     #         return Response(serializer.data)
-
-#     #     @swagger_auto_schema(operation_description="Get report by id")
-#     #     def get(self, request, report_id):
-#     #         try:
-#     #             report = Report.objects.get(id=report_id)
-#     #             serializer = ReportSerializer(report)
-#     #             return Response(serializer.data)
-#     #         except Report.DoesNotExist:
-#     #             return Response({'message': 'Report not found'}, status=status.HTTP_404_NOT_FOUND)
-
-#     #     @swagger_auto_schema(operation_description="Created a new report")
-#     #     def post(self, request):
-#     #         serializer = ReportSerializer(data=request.data)
-#     #         if serializer.is_valid():
-#     #             serializer.save()
-#     #             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#     #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#     def get(self, request):
-#         id = request.query_params.get('id', None)
-#         if id:
-#             # Get by id
-#             report = get_object_or_404(Report, pk=id)
-#             serializer = ReportSerializer(report)
-#         else:
-#             # Get all
-#             reports = Report.objects.all()
-#             serializer = ReportSerializer(reports, many=True)
-#         return Response(serializer.data)
-
-
 class UserAPIView(APIView):
     permission_classes = [AllowAny]
 
-    @swagger_auto_schema(operation_description="Get all users")
+    @swagger_auto_schema(
+        operation_description="Get all users or single user by id",
+        manual_parameters=[
+            openapi.Parameter(
+                'id',
+                openapi.IN_QUERY,
+                description="User ID (optional)",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            )
+        ],
+        responses={
+            200: UserSerializer(many=True),
+            404: 'User not found'
+        }
+    )
     def get(self, request):
-        users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
+        id = request.query_params.get('id')
+        if id:
+            user = get_object_or_404(User, pk=id)
+            serializer = UserSerializer(user)
+        else:
+            users = User.objects.all()
+            serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
-    @swagger_auto_schema(operation_description="Creted a new user")
+    @swagger_auto_schema(
+        operation_description="Create a new user",
+        request_body=UserSerializer,
+        responses={
+            201: UserSerializer,
+            400: 'Bad Request'
+        }
+    )
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(
+        operation_description="Update a user",
+        request_body=UserSerializer,
+        manual_parameters=[
+            openapi.Parameter(
+                'id',
+                openapi.IN_QUERY,
+                description="User ID",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            )
+        ],
+        responses={
+            200: UserSerializer,
+            400: 'Bad Request',
+            404: 'User not found'
+        }
+    )
+    def put(self, request):
+        id = request.query_params.get('id')
+        user = get_object_or_404(User, pk=id)
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(
+        operation_description="Delete a user",
+        manual_parameters=[
+            openapi.Parameter(
+                'id',
+                openapi.IN_QUERY,
+                description="User ID",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            )
+        ],
+        responses={
+            204: 'No Content',
+            404: 'User not found'
+        }
+    )
+    def delete(self, request):
+        id = request.query_params.get('id')
+        user = get_object_or_404(User, pk=id)
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class LicenseAPIView(APIView):
