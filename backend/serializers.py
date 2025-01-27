@@ -1,3 +1,4 @@
+from .models import Game
 from rest_framework import serializers
 from .models import User, Report, License, UserLicense
 
@@ -57,4 +58,16 @@ class ReportSerializer(serializers.ModelSerializer):
 class userSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        fields = '__all__'
+
+
+class PredictSerializer(serializers.Serializer):
+    numeros = serializers.ListField(
+        child=serializers.IntegerField()
+    )
+
+
+class GameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Game
         fields = '__all__'

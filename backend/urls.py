@@ -1,14 +1,14 @@
-from django.urls import include, path
-from rest_framework import routers
-from . import views
-
-router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet, "users")
-router.register(r'reports', views.ReportViewSet, "reports")
-router.register(r'licenses', views.LicenseViewSet, "licenses")
+from django.urls import path
+from .views import (
+    ReportAPIView,
+    UserAPIView,
+    LicenseAPIView,
+    GameInitView
+)
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('predict/init/', views.PredictorInitView.as_view(), name='predictor-init'),
-    path('predict/', views.PredictView.as_view(), name='predict'),
+    path('reports/', ReportAPIView.as_view(), name='reports'),
+    path('users/', UserAPIView.as_view(), name='users'),
+    path('licenses/', LicenseAPIView.as_view(), name='licenses'),
+    path('game/init/', GameInitView.as_view(), name='game-init'),
 ]

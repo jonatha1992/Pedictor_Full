@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User  # type: ignore
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 
@@ -98,3 +99,19 @@ class Report(models.Model):
 
     class Meta:
         db_table = 'reports'
+
+
+class Game(models.Model):
+    id_juego = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='games')
+    tipo = models.CharField(max_length=100)
+    ruleta = models.CharField(max_length=100)
+    cantidad_vecinos = models.IntegerField()
+    numero_tardanza = models.IntegerField()
+    umbral_probabilidad = models.FloatField()
+
+    def __str__(self):
+        return f"{self.id_juego}- {self.ruleta} - {self.tipo}"
+
+    class Meta:
+        db_table = 'games'
