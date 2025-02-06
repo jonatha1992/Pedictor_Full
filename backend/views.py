@@ -197,13 +197,28 @@ class GameInitView(APIView):
 
     @swagger_auto_schema(
         operation_description="Get all games",
+        manual_parameters=[
+            openapi.Parameter(
+                'id',
+                openapi.IN_QUERY,
+                description="Game ID (optional)",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            )
+        ],
         responses={
-            200: GameSerializer(many=True)
+            200: GameSerializer(many=True),
+            404: 'Report not found'
         }
     )
     def get(self, request):
-        games = Game.objects.all()
-        serializer = GameSerializer(games, many=True)
+        id = request.query_params.get('id')
+        if id:
+            games = get_object_or_404(Game, pk=id)
+            serializer = GameSerializer(Game)
+        else:
+            games = Game.objects.all()
+            serializer = GameSerializer(games, many=True)
         return Response(serializer.data)
 
 
