@@ -116,13 +116,40 @@ class UserAPIView(APIView):
 class LicenseAPIView(APIView):
     permission_classes = [AllowAny]
 
-    @swagger_auto_schema(operation_description="Get all licenses")
+    @swagger_auto_schema(
+        operation_description="Get all licenses or single license by id",
+        manual_parameters=[
+            openapi.Parameter(
+                'id',
+                openapi.IN_QUERY,
+                description="License ID (optional)",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            )
+        ],
+        responses={
+            200: LicenseSerializer(many=True),
+            404: 'License not found'
+        }
+    )
     def get(self, request):
-        licenses = License.objects.all()
-        serializer = LicenseSerializer(licenses, many=True)
+        id = request.query_params.get('id')
+        if id:
+            license = get_object_or_404(License, pk=id)
+            serializer = LicenseSerializer(license)
+        else:
+            licenses = License.objects.all()
+            serializer = LicenseSerializer(licenses, many=True)
         return Response(serializer.data)
 
-    @swagger_auto_schema(operation_description="Create a new license")
+    @swagger_auto_schema(
+        operation_description="Create a new license",
+        request_body=LicenseSerializer,
+        responses={
+            201: LicenseSerializer,
+            400: 'Bad Request'
+        }
+    )
     def post(self, request):
         serializer = LicenseSerializer(data=request.data)
         if serializer.is_valid():
