@@ -15,7 +15,6 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 
-
 firebase_creds = credentials.Certificate(settings.FIREBASE_CONFIG)
 firebase_app = firebase_admin.initialize_app(firebase_creds)
 
@@ -133,8 +132,23 @@ class LicenseAPIView(APIView):
 
 
 class GameInitView(APIView):
-
-    @swagger_auto_schema(operation_description="Create a new game")
+    @swagger_auto_schema(
+        operation_description="Create a new game",
+        request_body=GameSerializer,
+        responses={
+            201: openapi.Response(
+                description="Game created successfully",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(type=openapi.TYPE_STRING),
+                        'id_game': openapi.Schema(type=openapi.TYPE_INTEGER)
+                    }
+                )
+            ),
+            400: 'Bad Request'
+        }
+    )
     def post(self, request):
         # Get parameters from request
         data = request.data
@@ -150,11 +164,16 @@ class GameInitView(APIView):
             game = serializer.save()
             return Response({
                 'message': 'Game parameters saved',
-                'game_id': game.id_game
+                'id_game': game.id_game
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @swagger_auto_schema(operation_description="Get all games")
+    @swagger_auto_schema(
+        operation_description="Get all games",
+        responses={
+            200: GameSerializer(many=True)
+        }
+    )
     def get(self, request):
         games = Game.objects.all()
         serializer = GameSerializer(games, many=True)

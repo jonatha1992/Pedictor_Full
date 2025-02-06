@@ -87,7 +87,6 @@ class Report(models.Model):
     v1l = models.IntegerField()
     v2l = models.IntegerField()
     v3l = models.IntegerField()
-    v4l = models.IntegerField()
     numbers_to_predict = models.IntegerField()
     previous_numbers = models.IntegerField()
     neighbor_count = models.IntegerField()
@@ -102,16 +101,16 @@ class Report(models.Model):
 
 
 class Game(models.Model):
-    id_juego = models.AutoField(primary_key=True)
+    id_game = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='games')
     tipo = models.CharField(max_length=100)
-    ruleta = models.CharField(max_length=100)
+    nombre_ruleta = models.CharField(max_length=100)
+    tardanza = models.IntegerField()
     cantidad_vecinos = models.IntegerField()
-    numero_tardanza = models.IntegerField()
     umbral_probabilidad = models.FloatField()
 
     def __str__(self):
-        return f"{self.id_juego}- {self.ruleta} - {self.tipo}"
+        return f"{self.id_game}- {self.tipo} - {self.nombre_ruleta}"
 
     class Meta:
         db_table = 'games'
