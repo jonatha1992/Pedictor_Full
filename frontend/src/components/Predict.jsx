@@ -1,13 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import backgroundImage from "../assets/tablero.webp"; // Asegúrate de ajustar la ruta según la ubicación de tu imagen
 import backgroundImage1 from "../assets/tablero1.jpg"; // Asegúrate de ajustar la ruta según la ubicación de tu imagen
 import Probabilidades from "./Probabilidades";
 import Notificaciones from "./Notificaciones";
+import oro from "../assets/oro.webp";
+import crupiers from "../assets/crupiers.webp"; // Añadir esta importación
 
 const Predict = () => {
   const numbers = Array.from({ length: 37 }, (_, i) => i); // Array de 0 a 36
   const [notificaciones, setNotificaciones] = useState([]);
   const [numerosSeleccionados, setNumerosSeleccionados] = useState([]); // Nuevo estado
+  const [isOpen, setIsOpen] = useState(false);
+  
+  // Agregar una referencia al contenedor
+  const containerRef = useRef(null);
+
+  // Agregar una referencia para el contenedor de números
+  const scrollContainerRef = useRef(null);
+
+  // Agregar useEffect para controlar el scroll
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0;
+    }
+  }, [numerosSeleccionados]);
+
+  // Efecto para mantener el scroll al inicio cuando se agregan nuevos números
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollLeft = 0;
+    }
+  }, [numerosSeleccionados]);
 
   // useEffect para llamar a fetchDataWithToken cuando se monte el componente
   useEffect(() => {}, []);
@@ -24,8 +47,8 @@ const Predict = () => {
     <div className="md:h-screen">
       
       
-      <div className="h-[50vh] md:h-1/2 flex flex-col md:flex-row">
-        <div className="w-full h-full md:w-1/2 bg-green-200">
+      <div className="h-[40vh] md:h-1/2 flex flex-col md:flex-row">
+        <div className="w-full h-full md:w-1/2  bg-green-200">
           <div
             className="text-center text-white bg-cover bg-center h-full"
             style={{ backgroundImage: `url(${backgroundImage1})` }}
@@ -43,77 +66,112 @@ const Predict = () => {
         </div>
       </div>
 
-      {/* Parte inferior con tres columnas */}
       <div className="p-4 bg-green-800 md:h-1/2 md:flex md:flex-col  md:mt-0">
-        <div className="flex flex-col md:flex-row items-center md:h-full">
+        <div 
+          ref={containerRef}
+          className=" flex flex-col-reverse  md:flex-row items-center md:h-full"
+          style={{ scrollBehavior: 'smooth' }}
+        >
           {/* Columna 1 */}
-          <div className="w-full md:w-1/2 p-2 h-full overflow-y-auto ">
-          <div className="flex flex-col h-full justify-end">
-            <div className="grid md:grid-cols-10 grid-cols-5 gap-2 mb-20">
-              {/* Distribución de los números en la columna 1 */}
-              {numbers.slice(0, 37).map((num, index) => (
-                <div
-                  key={index}
-                  className={`col-span-1 text-center ${
-                    num === 0 ? "md:row-span-4" : ""
-                  }`}
-                >
-                  <button
-                    onClick={() => handleNumeroClick(num)}
-                    className={`w-full h-full p-2 rounded text-white ${
-                      num === 0
-                        ? "bg-green-500"
-                        : index % 2 === 0
-                        ? "bg-red-500"
-                        : "bg-black"
+          <div className="w-full md:w-1/2 p-2 h-full  ">
+            <div className="   md:flex md:flex-col flex-row md:h-full overflow-y-auto h-[30vh] justify-center block">
+              <div className="grid md:grid-cols-10 grid-cols-5 gap-2 ">
+                {/* Distribución de los números en la columna 1 */}
+                {numbers.slice(0, 37).map((num, index) => (
+                  <div
+                    key={index}
+                    className={`col-span-1 text-center ${
+                      num === 0 ? "md:row-span-4" : ""
                     }`}
                   >
-                    {num}
-                  </button>
-                </div>
-              ))}
-            </div>
-            </div>
-          </div>
-         
-          <div className="w-full md:w-1/2 p-2 flex flex-row justify-between md:justify-around md:h-full">
-            <div className="md:h-full flex flex-col w-full">
-              <div className="w-full md:p-2 flex overflow-x-auto whitespace-nowrap overflow-hidden" 
-                   style={{ scrollBehavior: 'smooth', borderRadius: '1rem', backgroundColor: '#7f1414ad' }} 
-                   ref={(el) => el?.scrollTo(0, 0)}>
-                <p className="text-white text-center flex items-center p2">Últimos resultados:</p>
-                {numerosSeleccionados.slice().reverse().map((numero, index) => (
-                  <div key={index} className="p-2 flex-shrink-0">
-                    <button className="h-full rounded text-white bg-blue-500 min-w-[40px]">
-                      {numero}
+                    <button
+                      onClick={() => handleNumeroClick(num)}
+                      className={`w-full h-full p-2 rounded text-white ${
+                        num === 0
+                          ? "bg-green-500"
+                          : index % 2 === 0
+                          ? "bg-red-500"
+                          : "bg-black"
+                      }`}
+                    >
+                      {num}
                     </button>
                   </div>
                 ))}
               </div>
-
-          
-          <div className="flex justify-around mt-4">
-            <div className="text-end pr-8">
-              <p>Tipo de ruleta:</p>
-              <p>Cantidad de vecinos:</p>
-              <p>Limite de juego:</p>
-              <p>Umbral de probabilidad:</p>
-            </div>
-            <div className="flex flex-col ">
-              <button 
-                className="mb-2 p-2 rounded text-white bg-red-500"
-                onClick={() => agregarNotificacion("Juego iniciado")}
-              >
-                Iniciar Juego
-              </button>
-              <button 
-                className="p-2 rounded text-white bg-black"
-                onClick={() => agregarNotificacion("Juego reiniciado")}
-              >
-                Reiniciar Juego
-              </button>
             </div>
           </div>
+         
+          {/* Columna 2 - Panel de control */}
+          <div className="w-full md:w-1/2 p-2 flex flex-row justify-between md:justify-around md:h-full bg-green-800">
+            <div className="md:h-full flex flex-col w-full">
+              <div 
+                ref={scrollContainerRef}
+                className="w-full md:p-2 flex " 
+                
+              >
+                <div className="flex flex-col w-full" style={{ backgroundImage: `url(${oro})` }}>
+                  <p className="text-white whitespace-nowrap px-2">Últimos resultados:</p>
+                  <div className="flex flex-row overflow-x-auto whitespace-nowrap " style={{ 
+                  scrollBehavior: 'smooth', 
+                  borderRadius: '1rem',
+                  msOverflowStyle: 'none',  // Para IE y Edge
+                  scrollbarWidth: 'none'     // Para Firefox
+                }}>
+                    {numerosSeleccionados.slice().reverse().map((numero, index) => (
+                      <div key={index} className="p-1">
+                        <button className="h-8 w-8 rounded text-white flex items-center justify-center  border border-solid border-[#d69747]">
+                          {numero}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-full mt-2">
+                {/* Botón del acordeón */}
+                <button
+                  className="w-full p-3 bg-green-700 text-white font-bold rounded-t flex justify-between items-center"
+                  onClick={() => setIsOpen(!isOpen)}
+                >
+                  <span>Configuración del juego</span>
+                  <span className={`transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
+                    ▼
+                  </span>
+                </button>
+                
+                {/* Contenido del acordeón */}
+                <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                  isOpen ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'
+                }`}>
+                  <div className="bg-green-900 p-4 rounded-b">
+                    <div className="flex justify-around">
+                      <div className="flex flex-col  justify-center text-white text-xs font-bold pr-8 items-start">
+                        <p>Tipo de ruleta:</p>
+                        <p>Cantidad de vecinos:</p>
+                        <p>Limite de juego:</p>
+                        <p>Umbral de probabilidad:</p>
+                      </div>
+                      <div className="flex flex-col">
+                        
+                        <button 
+                          className="p-2 rounded text-red-600 hover:opacity-90 transition-all bg-cover bg-left font-bold"
+                          onClick={() => agregarNotificacion("Juego reiniciado")}
+                          style={{ 
+                            backgroundImage: `url(${crupiers})`,
+                            backgroundPositionY: 'top',
+                            textShadow: '#ffffff 1px -1px 4px, #ffffff 1px -1px 4px, #ffffff 1px -1px 4px',
+                            boxShadow: 'rgba(0, 0, 0, 0.75) -13px 15px 11px 0px'
+                          }}
+                        >
+                          Reiniciar Juego
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
