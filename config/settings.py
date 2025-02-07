@@ -48,8 +48,8 @@ INSTALLED_APPS = [
 
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -136,10 +136,15 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:8000",
-    "http://localhost:5173",  #
-]
+# Configuración de CORS
+CORS_ALLOW_ALL_ORIGINS = True  # Solo para desarrollo
+CORS_ALLOW_CREDENTIALS = True
+
+# Para producción, es mejor especificar los orígenes permitidos:
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:5174",
+#     "http://127.0.0.1:5174",
+# ]
 
 
 FIREBASE_CONFIG = os.path.join(BASE_DIR, 'key.json')

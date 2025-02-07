@@ -24,7 +24,7 @@ const Home = () => (
 const App = () => {
   return (
     <Router>
-      <div>
+      <div className="container-fluid mx-auto px-4">
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
