@@ -10,7 +10,6 @@ import Footer from "./components/Footer";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Predict from "./components/Predict";
-import Test from "./test/Test";
 
 const Home = () => (
   <>
@@ -29,7 +28,6 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/test" element={<Test />} />
           <Route path="/register" element={<Register />} />
           <Route path="/predict" element={<Predict />} />
         </Routes>

@@ -20,7 +20,7 @@ const Predict = () => {
     tardanza: 0,
     cantidad_vecinos: 0,
     umbral_probabilidad: 0,
-    user:""
+    user:2
   });
 
   const handleInputChange = (e) => {
@@ -33,6 +33,9 @@ const Predict = () => {
 
   const handleSaveConfig = async () => {
     try {
+
+    console.log("Configuración del juego:", gameConfig);
+    
       const response = await axios.post('http://127.0.0.1:8000/api/games', gameConfig);
       console.log(response.data); // Puedes manejar la respuesta de la API aquí
     } catch (error) {
