@@ -325,7 +325,11 @@ class PredictAPIView(APIView):
         serializer = PredictSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data.get('numeros')
-            predictor = Predictor("Electromecanica.xlsx", Parametro_Juego(), HiperParametros())
+            # Se reutiliza la misma instancia, por lo que aunque se invoque en múltiples solicitudes
+            # no se recargará el modelo ni se leerá el archivo nuevamente
+            predictor = Predictor("Electromecanica.xlsx",
+                                  Parametro_Juego(cantidad_vecinos=4, limite_tardancia=10, umbral_probabilidad=20),
+                                  HiperParametros())
             resultado = predictor.predict_simple(data)
             return Response(resultado, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

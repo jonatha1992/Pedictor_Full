@@ -61,9 +61,19 @@ class userSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class HistoryItemSerializer(serializers.Serializer):
+    numero = serializers.IntegerField()
+    probabilidad = serializers.IntegerField()
+
+
 class PredictSerializer(serializers.Serializer):
-    numeros = serializers.ListField(
-        child=serializers.IntegerField()
+    number_before = serializers.ListField(
+        child=serializers.IntegerField(),
+        help_text="Lista de 10 números (entrada para la predicción)"
+    )
+    history = HistoryItemSerializer(
+        many=True,
+        help_text="Historial con número y probabilidad acumulada de predicciones anteriores"
     )
 
 
