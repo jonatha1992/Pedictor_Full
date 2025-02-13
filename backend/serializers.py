@@ -63,7 +63,23 @@ class userSerializer(serializers.ModelSerializer):
 
 class HistoryItemSerializer(serializers.Serializer):
     numero = serializers.IntegerField()
-    probabilidad = serializers.IntegerField()
+    probabilidad = serializers.FloatField()
+    repetido = serializers.IntegerField()
+
+
+class NumeroJugarSerializer(serializers.Serializer):
+    numero = serializers.IntegerField()
+    probabilidad = serializers.FloatField()
+    repetido = serializers.IntegerField()
+    tardancia = serializers.IntegerField()
+    vecinos = serializers.IntegerField()
+
+
+class GameSerializer(serializers.Serializer):
+    cantidad_vecinos = serializers.IntegerField(required=False, default=4)
+    limite_tardancia = serializers.IntegerField(required=False, default=10)
+    umbral_probabilidad = serializers.IntegerField(required=False, default=20)
+    # agregar otros campos según necesidad
 
 
 class PredictSerializer(serializers.Serializer):
@@ -73,11 +89,11 @@ class PredictSerializer(serializers.Serializer):
     )
     history = HistoryItemSerializer(
         many=True,
-        help_text="Historial con número y probabilidad acumulada de predicciones anteriores"
+        help_text="Historial con número, probabilidad acumulada y repetidos"
     )
-
-
-class GameSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Game
-        fields = '__all__'
+    jugados = NumeroJugarSerializer(
+        many=True,
+        required=False,
+        help_text="Números a jugar con sus respectivas propiedades"
+    )
+    game = GameSerializer()

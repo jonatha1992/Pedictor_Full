@@ -43,20 +43,39 @@ class Predictor:
             logging.debug(f"Usando modelo cacheado: {modelo_nombre}")
         return self._models[modelo_nombre]
 
-    def predict_simple(self, data: dict):
+    def predict_simple(self, jugados, history, game):
         """
-        Realiza una predicción simple usando el modelo.
-        Se espera que 'data' contenga dos llaves:
-          - number_before: lista de 10 números
-          - history: lista de diccionarios con 'numero' y 'probabilidad'
+        Procesa dos listas: 'jugados' y 'history', utilizando parámetros del game.
+        Aplica actualización de tardanza, probabilidad y vecinos.
         """
-        numbers = data.get("number_before")
-        if not isinstance(numbers, list) or len(numbers) != 10:
-            return {"error": "Se requiere un array de 10 números en 'number_before'"}
+        # Ejemplo: para cada número jugado, se busca actualizar el historial.
+        updated_history = []
+        for jugado in jugados:
+            num = jugado.get("numero")
+            # Buscamos si ya existe en el historial
+            entry = next((h for h in history if h["numero"] == num), None)
+            if entry:
+                # Actualizamos incrementando la probabilidad según el valor del jugado y ajustamos "repetido"
+                incremento = jugado.get("probabilidad", 0)  # Este ejemplo usa la probabilidad del jugado
+                entry["probabilidad"] += incremento
+                entry["repetido"] += 1
+                # Actualizamos la tardanza (por ejemplo, reduciéndola)
+                if jugado.get("tardancia", 1) > 0:
+                    jugado["tardancia"] -= 1
+            else:
+                # Si no existe, lo agregamos al historial
+                entry = {
+                    "numero": num,
+                    "probabilidad": jugado.get("probabilidad", 0),
+                    "repetido": 1
+                }
+                history.append(entry)
+            updated_history.append(entry)
 
-        input_data = np.array(numbers).reshape(1, -1)
-        prediction = self.model.predict(input_data, verbose=0)
-        pred_num = int(prediction.argmax())
-
-        # Se retorna la entrada, la predicción y el historial recibido sin modificación
-        return {"entrada": numbers, "prediccion": pred_num, "history": data.get("history", [])}
+        # Se puede incluir lógica adicional basada en parámetros del game (cantidad_vecinos, límite de tardanza, etc.)
+        resultado = {
+            "jugados": jugados,
+            "history": updated_history,
+            "game": game  # Se regresa para efectos de verificación o auditoría
+        }
+        return resultado

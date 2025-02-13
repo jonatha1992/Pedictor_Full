@@ -321,15 +321,32 @@ class ReportAPIView(APIView):
 class PredictAPIView(APIView):
     permission_classes = []  # Ajustar permisos según sea necesario
 
+    @swagger_auto_schema(
+        operation_description="Realiza una predicción utilizando números jugados, el historial y parámetros de game.",
+        request_body=PredictSerializer,
+        responses={
+            200: "Respuesta con jugados, historial actualizado y parámetros del juego",
+            400: "Bad Request"
+        }
+    )
     def post(self, request):
         serializer = PredictSerializer(data=request.data)
         if serializer.is_valid():
-            data = serializer.validated_data.get('numeros')
-            # Se reutiliza la misma instancia, por lo que aunque se invoque en múltiples solicitudes
-            # no se recargará el modelo ni se leerá el archivo nuevamente
-            predictor = Predictor("Electromecanica.xlsx",
-                                  Parametro_Juego(cantidad_vecinos=4, limite_tardancia=10, umbral_probabilidad=20),
-                                  HiperParametros())
-            resultado = predictor.predict_simple(data)
+            data = serializer.validated_data
+            jugados = data.get('jugados')
+            history = data.get('history')
+            game_data = data.get('game')
+
+            # Se instancia el Predictor (es singleton, de modo que no se recargará el modelo en cada petición)
+            predictor = Predictor(
+                "Electromecanica.xlsx",
+                Parametro_Juego(
+                    cantidad_vecinos=game_data.get("cantidad_vecinos", 4),
+                    limite_tardancia=game_data.get("limite_tardancia", 5),
+                    umbral_probabilidad=game_data.get("umbral_probabilidad", 20)
+                ),
+                HiperParametros()
+            )
+            resultado = predictor.predict_simple(jugados=jugados, history=history, game=game_data)
             return Response(resultado, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
