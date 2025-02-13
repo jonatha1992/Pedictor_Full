@@ -1,5 +1,7 @@
 from drf_yasg import openapi
 from django.shortcuts import get_object_or_404
+
+from backend.entity.parametro import HiperParametros, Parametro_Juego
 from .models import Game
 from .serializers import GameSerializer
 from grpc import Status
@@ -314,3 +316,16 @@ class ReportAPIView(APIView):
         report = get_object_or_404(Report, pk=id)
         report.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class PredictAPIView(APIView):
+    permission_classes = []  # Ajustar permisos según sea necesario
+
+    def post(self, request):
+        serializer = PredictSerializer(data=request.data)
+        if serializer.is_valid():
+            data = serializer.validated_data.get('numeros')
+            predictor = Predictor("Electromecanica.xlsx", Parametro_Juego(), HiperParametros())
+            resultado = predictor.predict_simple(data)
+            return Response(resultado, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

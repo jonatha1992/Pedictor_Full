@@ -324,3 +324,18 @@ class Predictor:
 
         if self.numeros_acertados:
             self.contador.incrementar_aciertos_totales(len(self.numeros_acertados))
+
+    def predict_simple(self, data: list):
+        # data debe ser un array de 10 números
+        if not isinstance(data, list) or len(data) != 10:
+            return {"error": "Se requiere un array de 10 números"}
+        last_num = data[-1]
+        if self.model:
+            # Se asume que el modelo espera shape (1, 10)
+            input_data = np.array(data).reshape(1, -1)
+            prediction = self.model.predict(input_data, verbose=0)
+            pred_num = int(prediction.argmax())
+        else:
+            # Lógica dummy: (último número + 1) mod 37
+            pred_num = (last_num + 1) % 37
+        return {"entrada": data, "prediccion": pred_num}
