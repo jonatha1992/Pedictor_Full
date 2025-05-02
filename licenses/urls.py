@@ -1,7 +1,8 @@
 from django.urls import path
-from . import views
+from .views import LicenseActivationView, UserLicenseDetail, update_last_used
 
 urlpatterns = [
-    # path('', views.LicenseListView.as_view()),
-    # path('<int:pk>/', views.LicenseDetailView.as_view()),
+    path('activate/', LicenseActivationView.as_view(), name='license-activate'),
+    path('my-license/', UserLicenseDetail.as_view(), name='user-license-detail'),
+    path('update-usage/', update_last_used, name='update-last-used'),
 ]

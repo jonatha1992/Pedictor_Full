@@ -1,0 +1,8 @@
+random_search/
+grid_search/
+search_parameters/
+env/
+best_models/
+output/
+*/__pycache__/
+__pycache__/

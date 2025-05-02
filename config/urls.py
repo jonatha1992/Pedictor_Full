@@ -17,10 +17,16 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    # Django admin
     path('admin/', admin.site.urls),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    
+    # API endpoints
     path('api/users/', include('users.urls')),
-    path('api/licenses/', include('licenses.urls')),
     path('api/games/', include('games.urls')),
+    path('api/licenses/', include('licenses.urls')),
     path('api/reports/', include('reports.urls')),
+    
+    # Swagger documentation
+    path('api/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]

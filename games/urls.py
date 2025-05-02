@@ -1,7 +1,7 @@
 from django.urls import path
-from . import views
+from .views import GameListView, GamePredictAPIView
 
 urlpatterns = [
-    # path('', views.GameListView.as_view()),
-    # path('<int:pk>/', views.GameDetailView.as_view()),
+    path('', GameListView.as_view(), name='game-list'),
+    path('predict/', GamePredictAPIView.as_view(), name='game-predict'),
 ]

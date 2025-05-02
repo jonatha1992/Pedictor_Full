@@ -62,7 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'backend.middleware.FirebaseAuthenticationMiddleware',  # habilitar para autenticar con firebase
+    # 'backend.middleware.FirebaseAuthenticationMiddleware',  # habilitar para autenticar con firebase
 
 ]
 
@@ -136,9 +136,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'frontend' / 'public',
+    BASE_DIR / 'frontend' / 'dist',  # Vite build output
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Serve index.html for all non-api routes
+TEMPLATE_DIRS = [
+    BASE_DIR / 'frontend' / 'dist'
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -171,6 +176,12 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
     ],
 }
+
+# Session settings
+SESSION_COOKIE_AGE = 86400  # 24 hours in seconds
+SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'  # Prevents CSRF
