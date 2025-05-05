@@ -124,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
@@ -140,10 +140,10 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Serve index.html for all non-api routes
-TEMPLATE_DIRS = [
-    BASE_DIR / 'frontend' / 'dist'
-]
+# # Serve index.html for all non-api routes
+# TEMPLATE_DIRS = [
+#     BASE_DIR / 'frontend' / 'dist'
+# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

@@ -11,6 +11,7 @@ from .serializers import GamePredictParamsSerializer
 from django.shortcuts import render
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
 
 class GameSerializer(ModelSerializer):
     class Meta:
@@ -24,6 +25,9 @@ class GameListView(generics.ListAPIView):
 
 
 class GamePredictAPIView(APIView):
+    # Disable authentication classes to avoid CSRF/session auth, allow anonymous
+    authentication_classes = []
+    permission_classes = [AllowAny]
     @swagger_auto_schema(
         request_body=GamePredictParamsSerializer,
         operation_description="""
@@ -38,7 +42,8 @@ class GamePredictAPIView(APIView):
     def post(self, request):
         serializer = GamePredictParamsSerializer(data=request.data)
         if not serializer.is_valid():
-            return Response(serializer.errors, status=400)
+            # Return validation errors under 'error' key for consistency
+            return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         data = serializer.validated_data
         numeros = data.get('numeros', [])
         parametros = data.get('parametros', {})

@@ -31,9 +31,8 @@
         "titleBar.inactiveBackground": "#703ad399",
         "titleBar.inactiveForeground": "#e7e7e799"
     },
-    "python.testing.pytestArgs": [
-        "."
-    ],
+    "python.testing.pytestArgs": [],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "python.testing.autoTestDiscoverOnSaveEnabled": true,
 }

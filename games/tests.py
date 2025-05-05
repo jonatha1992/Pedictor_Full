@@ -2,7 +2,6 @@ import json
 import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
-
 import os
 import numpy as np
 import pytest
