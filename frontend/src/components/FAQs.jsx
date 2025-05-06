@@ -20,13 +20,13 @@ const FAQs = () => {
   return (
     <section id="faq" className="py-20 bg-gray-100">
       <div className="container mx-auto">
-        <h2 className="text-3xl font-bold text-center text-primary mb-8">
+        <h2 className="mb-8 text-3xl font-bold text-center text-primary">
           Frequently Asked Questions
         </h2>
         <div className="space-y-4">
           {faqs.map((faq, index) => (
             <div key={index} className="p-4 bg-white rounded-lg shadow-lg">
-              <h3 className="text-xl font-bold mb-2">{faq.question}</h3>
+              <h3 className="mb-2 text-xl font-bold">{faq.question}</h3>
               <p>{faq.answer}</p>
             </div>
           ))}

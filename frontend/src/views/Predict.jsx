@@ -5,6 +5,7 @@ import ConfiguracionJuego from "../components/ConfiguracionJuego";
 import ProbabilidadAcumulada from "../components/ProbabilidadAcumulada";
 import TableroRuleta from "../components/TableroRuleta";
 import NumerosJugados from "../components/NumerosJugados";
+import crupiers from "../assets/crupiers.webp";
 
 const Predict = () => {
   const numbers = Array.from({ length: 37 }, (_, i) => i); // Array de 0 a 36
@@ -145,7 +146,11 @@ const Predict = () => {
         />
 
         {/* Arriba Derecha: Probabilidad acumulada por tirada */}
-        <ProbabilidadAcumulada historial={historial} backgroundImage1={backgroundImage1} />
+        <ProbabilidadAcumulada
+          historial={historial}
+          backgroundImage1={backgroundImage1}
+          maxRepeticiones={gameConfig.cantidad_vecinos}
+        />
 
         {/* Abajo Izquierda: Tablero de ruleta */}
         <TableroRuleta handleNumeroClick={handleNumeroClick} />
