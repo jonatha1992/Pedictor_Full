@@ -1,17 +1,18 @@
 import React, { useEffect, useState, useRef } from "react";
 import backgroundImage from "../assets/tablero.webp"; // Asegúrate de ajustar la ruta según la ubicación de tu imagen
 import backgroundImage1 from "../assets/tablero1.jpg"; // Asegúrate de ajustar la ruta según la ubicación de tu imagen
-import Probabilidades from "./Probabilidades";
-import Notificaciones from "./Notificaciones";
+import Probabilidades from "../components/Probabilidades";
+import Notificaciones from "../components/Notificaciones";
 import oro from "../assets/oro.webp";
 import crupiers from "../assets/crupiers.webp"; // Añadir esta importación
-import Modal from "./Modal"; // Asegúrate de ajustar la ruta
+import Modal from "../components/Modal"; // Asegúrate de ajustar la ruta
 import axios from 'axios';
 
 const Predict = () => {
   const numbers = Array.from({ length: 37 }, (_, i) => i); // Array de 0 a 36
   const [notificaciones, setNotificaciones] = useState([]);
-  const [numerosSeleccionados, setNumerosSeleccionados] = useState([]); // Nuevo estado
+  const [numerosSeleccionados, setNumerosSeleccionados] = useState([]);
+  const [historial, setHistorial] = useState([]); // Historial de probabilidades acumuladas
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [gameConfig, setGameConfig] = useState({
@@ -20,8 +21,57 @@ const Predict = () => {
     tardanza: 0,
     cantidad_vecinos: 0,
     umbral_probabilidad: 0,
-    user:2
+    user: 2
   });
+  // Llama al backend cuando hay suficientes números seleccionados
+  useEffect(() => {
+    const fetchProbabilidades = async () => {
+      console.log("[Predict] numerosSeleccionados:", numerosSeleccionados);
+      if (numerosSeleccionados.length >= 8) {
+        console.log("[Predict] Enviando consulta al backend con:", numerosSeleccionados.slice(-8));
+        try {
+          const response = await axios.post("http://127.0.0.1:8000/api/games/predict/", {
+            numeros: numerosSeleccionados.slice(-8),
+            parametros: {
+              numeros_anteriores: 8,
+              tipo_ruleta: gameConfig.tipo || "Electromecanica"
+            }
+          });
+          const probabilidades = response.data.probabilidades;
+          console.log("[Predict] Respuesta del backend:", probabilidades);
+          actualizarHistorial(probabilidades);
+        } catch (error) {
+          setNotificaciones(prev => [...prev, "Error al consultar el backend"]);
+          console.error("[Predict] Error al consultar el backend:", error);
+        }
+      } else {
+        console.log("[Predict] Menos de 8 números seleccionados, no se consulta el backend.");
+      }
+    };
+    fetchProbabilidades();
+    // eslint-disable-next-line
+  }, [numerosSeleccionados]);
+
+  // Actualiza el historial local acumulando probabilidad y repeticiones
+  const actualizarHistorial = (predicciones) => {
+    setHistorial(prevHistorial => {
+      const nuevoHistorial = [...prevHistorial];
+      predicciones.forEach(pred => {
+        const idx = nuevoHistorial.findIndex(h => h.numero === pred.numero);
+        if (idx !== -1) {
+          nuevoHistorial[idx].probabilidadAcumulada += pred.probabilidad;
+          nuevoHistorial[idx].repeticiones += 1;
+        } else {
+          nuevoHistorial.push({
+            numero: pred.numero,
+            probabilidadAcumulada: pred.probabilidad,
+            repeticiones: 1
+          });
+        }
+      });
+      return nuevoHistorial;
+    });
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -34,9 +84,9 @@ const Predict = () => {
   const handleSaveConfig = async () => {
     try {
 
-    console.log("Configuración del juego:", gameConfig);
-    
-      const response = await axios.post('http://127.0.0.1:8000/api/games', gameConfig);
+      console.log("Configuración del juego:", gameConfig);
+
+      const response = await axios.post('http://127.0.0.1:8000/api/games/predict', gameConfig);
       console.log(response.data); // Puedes manejar la respuesta de la API aquí
     } catch (error) {
       console.error(error);
@@ -70,7 +120,7 @@ const Predict = () => {
   }, [numerosSeleccionados]);
 
   // useEffect para llamar a fetchDataWithToken cuando se monte el componente
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   const agregarNotificacion = (mensaje) => {
     setNotificaciones((prev) => [...prev, mensaje]);
@@ -83,17 +133,17 @@ const Predict = () => {
   return (
     <div className="md:h-screen">
       <div className="h-[40vh] md:h-1/2 flex flex-col md:flex-row">
-        <div className="w-full h-full md:w-1/2  bg-green-200">
+        <div className="w-full h-full bg-green-200 md:w-1/2">
           <div
-            className="text-center text-white bg-cover bg-center h-full"
+            className="h-full text-center text-white bg-center bg-cover"
             style={{ backgroundImage: `url(${backgroundImage1})` }}
           >
-            <Probabilidades></Probabilidades>
+            <Probabilidades historial={historial} />
           </div>
         </div>
         <div className=" w-full md:h-full h-[50vh] md:w-1/2 bg-green-200">
           <div
-            className="text-center  text-white bg-cover bg-center h-full flex"
+            className="flex h-full text-center text-white bg-center bg-cover"
             style={{ backgroundImage: `url(${backgroundImage1})` }}
           >
             <Notificaciones notificaciones={notificaciones} />
@@ -101,33 +151,31 @@ const Predict = () => {
         </div>
       </div>
 
-      <div className="p-4 bg-green-800 md:h-1/2 md:flex md:flex-col  md:mt-0">
+      <div className="p-4 bg-green-800 md:h-1/2 md:flex md:flex-col md:mt-0">
         <div
           ref={containerRef}
-          className=" flex flex-col-reverse  md:flex-row items-center md:h-full"
+          className="flex flex-col-reverse items-center md:flex-row md:h-full"
           style={{ scrollBehavior: "smooth" }}
         >
           {/* Columna 1 */}
-          <div className="w-full md:w-1/2 p-2 h-full  ">
+          <div className="w-full h-full p-2 md:w-1/2 ">
             <div className="   md:flex md:flex-col flex-row md:h-full overflow-y-auto h-[30vh] justify-center block">
-              <div className="grid md:grid-cols-10 grid-cols-5 gap-2 ">
+              <div className="grid grid-cols-5 gap-2 md:grid-cols-10 ">
                 {/* Distribución de los números en la columna 1 */}
                 {numbers.slice(0, 37).map((num, index) => (
                   <div
                     key={index}
-                    className={`col-span-1 text-center ${
-                      num === 0 ? "md:row-span-4" : ""
-                    }`}
+                    className={`col-span-1 text-center ${num === 0 ? "md:row-span-4" : ""
+                      }`}
                   >
                     <button
                       onClick={() => handleNumeroClick(num)}
-                      className={`w-full h-full p-2 rounded text-white ${
-                        num === 0
-                          ? "bg-green-500"
-                          : index % 2 === 0
+                      className={`w-full h-full p-2 rounded text-white ${num === 0
+                        ? "bg-green-500"
+                        : index % 2 === 0
                           ? "bg-red-500"
                           : "bg-black"
-                      }`}
+                        }`}
                     >
                       {num}
                     </button>
@@ -138,14 +186,14 @@ const Predict = () => {
           </div>
 
           {/* Columna 2 - Panel de control */}
-          <div className="w-full md:w-1/2 p-2 flex flex-row justify-between md:justify-around md:h-full bg-green-800">
-            <div className="md:h-full flex flex-col w-full">
-              <div ref={scrollContainerRef} className="w-full md:p-2 flex ">
+          <div className="flex flex-row justify-between w-full p-2 bg-green-800 md:w-1/2 md:justify-around md:h-full">
+            <div className="flex flex-col w-full md:h-full">
+              <div ref={scrollContainerRef} className="flex w-full md:p-2 ">
                 <div
                   className="flex flex-col w-full"
                   style={{ backgroundImage: `url(${oro})` }}
                 >
-                  <p className="text-white whitespace-nowrap px-2">
+                  <p className="px-2 text-white whitespace-nowrap">
                     Últimos resultados:
                   </p>
                   <div
@@ -174,14 +222,13 @@ const Predict = () => {
               <div className="w-full mt-2">
                 {/* Botón del acordeón */}
                 <button
-                  className="w-full p-3 bg-green-700 text-white font-bold rounded-t flex justify-between items-center"
+                  className="flex items-center justify-between w-full p-3 font-bold text-white bg-green-700 rounded-t"
                   onClick={() => setIsOpen(!isOpen)}
                 >
                   <span>Configuración del juego</span>
                   <span
-                    className={`transform transition-transform duration-200 ${
-                      isOpen ? "rotate-180" : ""
-                    }`}
+                    className={`transform transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+                      }`}
                   >
                     ▼
                   </span>
@@ -200,7 +247,7 @@ const Predict = () => {
                         name="tipo"
                         value={gameConfig.tipo}
                         onChange={handleInputChange}
-                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                        className="block w-full p-2 mt-1 border border-gray-300 rounded-md"
                         required
                       />
                     </div>
@@ -214,7 +261,7 @@ const Predict = () => {
                         name="nombre_ruleta"
                         value={gameConfig.nombre_ruleta}
                         onChange={handleInputChange}
-                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                        className="block w-full p-2 mt-1 border border-gray-300 rounded-md"
                         required
                       />
                     </div>
@@ -228,7 +275,7 @@ const Predict = () => {
                         name="tardanza"
                         value={gameConfig.tardanza}
                         onChange={handleInputChange}
-                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                        className="block w-full p-2 mt-1 border border-gray-300 rounded-md"
                         required
                       />
                     </div>
@@ -242,7 +289,7 @@ const Predict = () => {
                         name="cantidad_vecinos"
                         value={gameConfig.cantidad_vecinos}
                         onChange={handleInputChange}
-                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                        className="block w-full p-2 mt-1 border border-gray-300 rounded-md"
                         required
                       />
                     </div>
@@ -257,15 +304,15 @@ const Predict = () => {
                         value={gameConfig.umbral_probabilidad}
                         onChange={handleInputChange}
                         step="0.01"
-                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                        className="block w-full p-2 mt-1 border border-gray-300 rounded-md"
                         required
                       />
                     </div>
 
                     <button
-                    onClick={handleSaveConfig}
+                      onClick={handleSaveConfig}
                       type="submit"
-                      className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
+                      className="w-full py-2 text-white bg-green-500 rounded hover:bg-green-600"
                     >
                       Guardar Configuración
                     </button>
@@ -273,13 +320,12 @@ const Predict = () => {
                 </Modal>
                 {/* Contenido del acordeón */}
                 <div
-                  className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                    isOpen ? "max-h-[200px] opacity-100" : "max-h-0 opacity-0"
-                  }`}
+                  className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? "max-h-[200px] opacity-100" : "max-h-0 opacity-0"
+                    }`}
                 >
-                  <div className="bg-green-900 p-4 rounded-b">
+                  <div className="p-4 bg-green-900 rounded-b">
                     <div className="flex justify-around">
-                      <div className="flex flex-col  justify-center text-white text-xs font-bold pr-8 items-start">
+                      <div className="flex flex-col items-start justify-center pr-8 text-xs font-bold text-white">
                         <p>Tipo de ruleta: {gameConfig.tipo}</p>
                         <p>Cantidad de vecinos: {gameConfig.cantidad_vecinos}</p>
                         <p>Nombre de ruleta: {gameConfig.nombre_ruleta}</p>
@@ -287,7 +333,7 @@ const Predict = () => {
                       </div>
                       <div className="flex flex-col">
                         <button
-                          className="p-2 rounded text-red-600 hover:opacity-90 transition-all bg-cover bg-left font-bold"
+                          className="p-2 font-bold text-red-600 transition-all bg-left bg-cover rounded hover:opacity-90"
                           onClick={() => setIsModalOpen(true)}
                           style={{
                             backgroundImage: `url(${crupiers})`,

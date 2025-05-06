@@ -62,9 +62,13 @@ class GamePredictAPIView(APIView):
         try:
             predictor = Predictor(model_path, numeros_anteriores=numeros_anteriores)
             probabilidades = predictor.predecir(numeros)
-            # Devuelve las probabilidades para cada número (0-36)
+            # Devuelve las probabilidades como lista de objetos {numero, probabilidad}
+            probabilidades_obj = [
+                {"numero": i, "probabilidad": p}
+                for i, p in enumerate(probabilidades)
+            ]
             return Response({
-                "probabilidades": probabilidades,
+                "probabilidades": probabilidades_obj,
                 "modelo_usado": os.path.basename(model_path)
             }, status=status.HTTP_200_OK)
         except Exception as e:

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Alert } from "./Alert";
+import { Alert } from "../components/Alert";
 
 const Login = () => {
   const [user, setUser] = useState({
@@ -47,17 +47,17 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-accent py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
+    <div className="flex items-center justify-center min-h-screen px-4 py-12 bg-accent sm:px-6 lg:px-8">
+      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-primary">
+          <h2 className="mt-6 text-3xl font-extrabold text-center text-primary">
             Iniciar sesión
           </h2>
         </div>
         {error && <Alert message={error} />}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <input type="hidden" name="remember" value="true" />
-          <div className="rounded-md shadow-sm -space-y-px">
+          <div className="-space-y-px rounded-md shadow-sm">
             <div>
               <label htmlFor="email" className="sr-only">
                 Correo electrónico
@@ -68,7 +68,7 @@ const Login = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
+                className="relative block w-full px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-none appearance-none rounded-t-md focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
                 placeholder="Correo electrónico"
                 onChange={handleChange}
               />
@@ -83,7 +83,7 @@ const Login = () => {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
+                className="relative block w-full px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-none appearance-none rounded-b-md focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
                 placeholder="Contraseña"
                 onChange={handleChange}
               />
@@ -94,7 +94,7 @@ const Login = () => {
             <div className="text-sm">
               <a
                 href="#"
-                className="font-medium text-secondary hover:text-primary transition-colors"
+                className="font-medium transition-colors text-secondary hover:text-primary"
               >
                 ¿Olvidaste tu contraseña?
               </a>
@@ -104,7 +104,7 @@ const Login = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-highlight transition-colors"
+              className="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white transition-colors border border-transparent rounded-md group bg-primary hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-highlight"
             >
               Iniciar sesión
             </button>
@@ -112,7 +112,7 @@ const Login = () => {
         </form>
         <button
           onClick={handleGoogleSignin}
-          className="bg-slate-50 hover:bg-slate-200 text-black  shadow rounded border-2 border-gray-300 py-2 px-4 w-full"
+          className="w-full px-4 py-2 text-black border-2 border-gray-300 rounded shadow bg-slate-50 hover:bg-slate-200"
         >
           Google login
         </button>
@@ -121,7 +121,7 @@ const Login = () => {
             ¿No tienes una cuenta?{" "}
             <Link
               to="/register"
-              className="font-medium text-secondary hover:text-primary transition-colors"
+              className="font-medium transition-colors text-secondary hover:text-primary"
             >
               Regístrate
             </Link>

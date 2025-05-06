@@ -7,9 +7,9 @@ import Features from "./components/Features";
 import Pricing from "./components/Pricing";
 import FAQs from "./components/FAQs";
 import Footer from "./components/Footer";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import Predict from "./components/Predict";
+import Login from "./views/Login";
+import Register from "./views/Register";
+import Predict from "./views/Predict";
 
 const Home = () => (
   <>
@@ -23,7 +23,7 @@ const Home = () => (
 const App = () => {
   return (
     <Router>
-      <div className="container-fluid mx-auto px-4">
+      <div className="px-4 mx-auto container-fluid">
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />

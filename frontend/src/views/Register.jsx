@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Alert } from "./Alert";
+import { Alert } from "../components/Alert";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -60,16 +60,16 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-accent py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
+    <div className="flex items-center justify-center min-h-screen px-4 py-12 bg-accent sm:px-6 lg:px-8">
+      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-primary">
+          <h2 className="mt-6 text-3xl font-extrabold text-center text-primary">
             Registro de Usuario
           </h2>
         </div>
         {errors.general && <Alert message={errors.general} />}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+          <div className="-space-y-px rounded-md shadow-sm">
             <div>
               <label htmlFor="name" className="sr-only">
                 Nombre
@@ -79,13 +79,13 @@ const Register = () => {
                 name="name"
                 type="text"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
+                className="relative block w-full px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-none appearance-none rounded-t-md focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
                 placeholder="Nombre completo"
                 value={formData.name}
                 onChange={handleChange}
               />
               {errors.name && (
-                <p className="text-secondary text-xs mt-1">{errors.name}</p>
+                <p className="mt-1 text-xs text-secondary">{errors.name}</p>
               )}
             </div>
             <div>
@@ -97,12 +97,12 @@ const Register = () => {
                 name="birthDate"
                 type="date"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
+                className="relative block w-full px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-none appearance-none focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
                 value={formData.birthDate}
                 onChange={handleChange}
               />
               {errors.birthDate && (
-                <p className="text-secondary text-xs mt-1">
+                <p className="mt-1 text-xs text-secondary">
                   {errors.birthDate}
                 </p>
               )}
@@ -117,13 +117,13 @@ const Register = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
+                className="relative block w-full px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-none appearance-none focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
                 placeholder="Correo electrónico"
                 value={formData.email}
                 onChange={handleChange}
               />
               {errors.email && (
-                <p className="text-secondary text-xs mt-1">{errors.email}</p>
+                <p className="mt-1 text-xs text-secondary">{errors.email}</p>
               )}
             </div>
             <div>
@@ -136,13 +136,13 @@ const Register = () => {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
+                className="relative block w-full px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-none appearance-none focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
                 placeholder="Contraseña"
                 value={formData.password}
                 onChange={handleChange}
               />
               {errors.password && (
-                <p className="text-secondary text-xs mt-1">{errors.password}</p>
+                <p className="mt-1 text-xs text-secondary">{errors.password}</p>
               )}
             </div>
             <div>
@@ -155,13 +155,13 @@ const Register = () => {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
+                className="relative block w-full px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-none appearance-none rounded-b-md focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
                 placeholder="Confirmar Contraseña"
                 value={formData.confirmPassword}
                 onChange={handleChange}
               />
               {errors.confirmPassword && (
-                <p className="text-secondary text-xs mt-1">
+                <p className="mt-1 text-xs text-secondary">
                   {errors.confirmPassword}
                 </p>
               )}
@@ -171,7 +171,7 @@ const Register = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-highlight transition-colors"
+              className="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white transition-colors border border-transparent rounded-md group bg-primary hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-highlight"
             >
               Registrarse
             </button>
@@ -182,7 +182,7 @@ const Register = () => {
             ¿Ya tienes una cuenta?{" "}
             <Link
               to="/login"
-              className="font-medium text-secondary hover:text-primary transition-colors"
+              className="font-medium transition-colors text-secondary hover:text-primary"
             >
               Inicia sesión
             </Link>
