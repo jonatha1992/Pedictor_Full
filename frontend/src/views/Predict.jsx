@@ -22,12 +22,32 @@ const Predict = () => {
     umbral_probabilidad: 0,
     user: 2
   });
-  // Llama al backend cuando hay suficientes números seleccionados
+
+  // Redirigir a configuración si no está configurado antes de jugar
+  const isConfigReady = gameConfig.tipo && gameConfig.nombre_ruleta && gameConfig.tardanza > 0 && gameConfig.cantidad_vecinos > 0 && gameConfig.umbral_probabilidad > 0;
+  const [showConfigWarning, setShowConfigWarning] = useState(false);
+
+
+  // Mostrar el modal automáticamente si la configuración no está lista
   useEffect(() => {
+    if (!isConfigReady) {
+      setIsModalOpen(true);
+    }
+  }, [isConfigReady]);
+
+  useEffect(() => {
+    if (!isConfigReady && numerosSeleccionados.length > 0) {
+      setShowConfigWarning(true);
+    } else {
+      setShowConfigWarning(false);
+    }
+  }, [isConfigReady, numerosSeleccionados]);
+
+  // Llama al backend cuando hay suficientes números seleccionados y la config está lista
+  useEffect(() => {
+    if (!isConfigReady) return;
     const fetchProbabilidades = async () => {
-      console.log("[Predict] numerosSeleccionados:", numerosSeleccionados);
       if (numerosSeleccionados.length >= 8) {
-        console.log("[Predict] Enviando consulta al backend con:", numerosSeleccionados.slice(-8));
         try {
           const response = await axios.post("http://127.0.0.1:8000/api/games/predict/", {
             numeros: numerosSeleccionados.slice(-8),
@@ -37,19 +57,15 @@ const Predict = () => {
             }
           });
           const probabilidades = response.data.probabilidades;
-          console.log("[Predict] Respuesta del backend:", probabilidades);
           actualizarHistorial(probabilidades);
         } catch (error) {
           setNotificaciones(prev => [...prev, "Error al consultar el backend"]);
-          console.error("[Predict] Error al consultar el backend:", error);
         }
-      } else {
-        console.log("[Predict] Menos de 8 números seleccionados, no se consulta el backend.");
       }
     };
     fetchProbabilidades();
     // eslint-disable-next-line
-  }, [numerosSeleccionados]);
+  }, [numerosSeleccionados, isConfigReady]);
 
   // Actualiza el historial local acumulando probabilidad y repeticiones
   const actualizarHistorial = (predicciones) => {
@@ -78,6 +94,10 @@ const Predict = () => {
       ...gameConfig,
       [name]: value,
     });
+    // Guardar el umbral en localStorage para que Probabilidades.jsx lo use
+    if (name === 'umbral_probabilidad') {
+      localStorage.setItem('umbral_probabilidad', value);
+    }
   };
 
   const handleSaveConfig = async () => {
@@ -131,6 +151,11 @@ const Predict = () => {
 
   return (
     <div className="p-2 bg-green-800 md:h-screen md:p-6">
+      {showConfigWarning && (
+        <div className="p-4 mb-4 font-bold text-center text-white bg-red-500 rounded animate-pulse">
+          Debes elegir los parámetros de juego antes de comenzar a jugar.
+        </div>
+      )}
       <div className="grid w-full h-full grid-cols-1 grid-rows-4 gap-4 md:grid-cols-2 md:grid-rows-2">
         {/* Arriba Izquierda: Configuración del juego */}
         <ConfiguracionJuego
@@ -153,7 +178,7 @@ const Predict = () => {
         />
 
         {/* Abajo Izquierda: Tablero de ruleta */}
-        <TableroRuleta handleNumeroClick={handleNumeroClick} />
+        <TableroRuleta handleNumeroClick={isConfigReady ? handleNumeroClick : () => setShowConfigWarning(true)} />
 
         {/* Abajo Derecha: Números jugados */}
         <NumerosJugados numerosSeleccionados={numerosSeleccionados} />

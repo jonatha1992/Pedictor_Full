@@ -1,10 +1,10 @@
 import React from "react";
 
 const NumerosJugados = ({ numerosSeleccionados }) => (
-    <div className="bg-green-900 rounded p-4 flex flex-col items-center justify-center">
-        <div className="w-full flex flex-col items-center">
-            <p className="px-2 text-white whitespace-nowrap mb-2">Últimos resultados:</p>
-            <div className="flex flex-row flex-wrap gap-2 justify-center items-center w-full">
+    <div className="flex flex-col items-center justify-center p-4 bg-green-900 rounded">
+        <div className="flex flex-col items-center w-full">
+            <p className="px-2 mb-2 text-white whitespace-nowrap">Últimos resultados:</p>
+            <div className="flex flex-row flex-wrap items-center justify-center w-full gap-2">
                 {numerosSeleccionados.slice().reverse().map((numero, index) => {
                     let colorClass = "bg-black";
                     if (numero === 0) colorClass = "bg-green-500";
