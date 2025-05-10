@@ -49,6 +49,13 @@ const Predict = () => {
     const fetchProbabilidades = async () => {
       if (numerosSeleccionados.length >= 8) {
         try {
+          console.log("Enviando consulta al backend con:", {
+            numeros: numerosSeleccionados.slice(-8),
+            parametros: {
+              numeros_anteriores: 8,
+              tipo_ruleta: gameConfig.tipo || "Electromecanica"
+            }
+          });
           const response = await axios.post("http://127.0.0.1:8000/api/games/predict/", {
             numeros: numerosSeleccionados.slice(-8),
             parametros: {
@@ -56,10 +63,12 @@ const Predict = () => {
               tipo_ruleta: gameConfig.tipo || "Electromecanica"
             }
           });
+          console.log("Respuesta del backend:", response.data);
           const probabilidades = response.data.probabilidades;
           actualizarHistorial(probabilidades);
         } catch (error) {
           setNotificaciones(prev => [...prev, "Error al consultar el backend"]);
+          console.error("Error al consultar el backend:", error);
         }
       }
     };
@@ -69,6 +78,7 @@ const Predict = () => {
 
   // Actualiza el historial local acumulando probabilidad y repeticiones
   const actualizarHistorial = (predicciones) => {
+    console.log("Probabilidades recibidas para actualizarHistorial:", predicciones);
     setHistorial(prevHistorial => {
       const nuevoHistorial = [...prevHistorial];
       predicciones.forEach(pred => {
@@ -84,6 +94,7 @@ const Predict = () => {
           });
         }
       });
+      console.log("Historial actualizado:", nuevoHistorial);
       return nuevoHistorial;
     });
   };
