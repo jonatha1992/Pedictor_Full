@@ -59,12 +59,12 @@ class GamePredictAPIView(APIView):
             if not os.path.exists(model_path):
                 return Response({"error": "Modelo de predicción no encontrado."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+        from .predictor_singleton import get_predictor
         try:
-            predictor = Predictor(model_path, numeros_anteriores=numeros_anteriores)
+            predictor = get_predictor(model_path, numeros_anteriores)
             probabilidades = predictor.predecir(numeros)
-            # Devuelve las probabilidades como lista de objetos {numero, probabilidad}
             probabilidades_obj = [
-                {"numero": i, "probabilidad": p}
+                {"numero": i, "probabilidad": round(p, 2)}
                 for i, p in enumerate(probabilidades)
             ]
             return Response({

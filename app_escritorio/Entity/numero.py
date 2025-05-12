@@ -18,15 +18,13 @@ def modificar_tardanza(fn):
 class NumeroBase:
     numero: int
     probabilidad: float
-    repetido: int = 0
 
     def actualizar_probabilidad(self, nueva_probabilidad: float):
-        """Actualiza la probabilidad y cuenta repeticiones"""
+        """Actualiza la probabilidad"""
         self.probabilidad += nueva_probabilidad
-        self.repetido += 1
 
     def __str__(self):
-        return f"(N:{self.numero}, P:{self.probabilidad}, R:{self.repetido})"
+        return f"(N:{self.numero}, P:{self.probabilidad})"
 
 
 @dataclass
@@ -34,9 +32,8 @@ class NumeroJugar(NumeroBase):
     vecinos: int = 1
     tardancia: int = 1
 
-    # @modificar_tardanza
     def actualizar_probabilidad(self, nueva_probabilidad: float):
-        """Actualiza probabilidad y modifica tardanza"""
+        """Actualiza probabilidad y modifica tardancia"""
         super().actualizar_probabilidad(nueva_probabilidad)
 
     def jugar(self):
@@ -44,7 +41,7 @@ class NumeroJugar(NumeroBase):
         self.tardancia += 1
 
     def __str__(self):
-        return f"(N:{self.numero}, P:{self.probabilidad}, T:{self.tardancia}, R:{self.repetido})"
+        return f"(N:{self.numero}, P:{self.probabilidad}, T:{self.tardancia})"
 
 
 @dataclass

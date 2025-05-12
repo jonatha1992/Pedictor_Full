@@ -15,11 +15,11 @@ const Predict = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [gameConfig, setGameConfig] = useState({
-    tipo: "",
-    nombre_ruleta: "",
-    tardanza: 0,
-    cantidad_vecinos: 0,
-    umbral_probabilidad: 0,
+    tipo: "Electromecanica",
+    nombre_ruleta: "Roling money",
+    tardanza: 7,
+    cantidad_vecinos: 1,
+    umbral_probabilidad: 20,
     user: 2
   });
 
@@ -76,21 +76,43 @@ const Predict = () => {
     // eslint-disable-next-line
   }, [numerosSeleccionados, isConfigReady]);
 
-  // Actualiza el historial local acumulando probabilidad y repeticiones
+  // Actualiza el historial local acumulando probabilidad
   const actualizarHistorial = (predicciones) => {
-    console.log("Probabilidades recibidas para actualizarHistorial:", predicciones);
     setHistorial(prevHistorial => {
       const nuevoHistorial = [...prevHistorial];
+      const umbral = Number(localStorage.getItem('umbral_probabilidad')) || 0;
+      const tardanzaMax = Number(localStorage.getItem('tardanza_max')) || 7; // o usa gameConfig.tardanza si lo tienes accesible
       predicciones.forEach(pred => {
+        let probabilidad = pred.probabilidad;
+        if (typeof probabilidad === 'string') probabilidad = parseInt(probabilidad);
+        if (typeof probabilidad === 'number' && probabilidad <= 1) probabilidad = Math.round(probabilidad * 100);
+        if (probabilidad > 100) probabilidad = 100;
+        if (probabilidad < 0) probabilidad = 0;
         const idx = nuevoHistorial.findIndex(h => h.numero === pred.numero);
+        // Si ya existe en historial
         if (idx !== -1) {
-          nuevoHistorial[idx].probabilidadAcumulada += pred.probabilidad;
-          nuevoHistorial[idx].repeticiones += 1;
+          // Si ya está apostando (superó umbral antes)
+          if (nuevoHistorial[idx].probabilidadAcumulada >= umbral) {
+            // Aumentar tardanza
+            nuevoHistorial[idx].tardanza = (nuevoHistorial[idx].tardanza || 0) + 1;
+            // Si supera la tardanza máxima, reiniciar
+            if (nuevoHistorial[idx].tardanza > tardanzaMax) {
+              nuevoHistorial[idx].tardanza = 0;
+              nuevoHistorial[idx].probabilidadAcumulada = 0;
+            } else {
+              nuevoHistorial[idx].probabilidadAcumulada += probabilidad;
+            }
+          } else {
+            // Si no está apostando, solo suma probabilidad y reinicia tardanza
+            nuevoHistorial[idx].probabilidadAcumulada += probabilidad;
+            nuevoHistorial[idx].tardanza = 0;
+          }
         } else {
+          // Nuevo número
           nuevoHistorial.push({
             numero: pred.numero,
-            probabilidadAcumulada: pred.probabilidad,
-            repeticiones: 1
+            probabilidadAcumulada: probabilidad,
+            tardanza: 0
           });
         }
       });

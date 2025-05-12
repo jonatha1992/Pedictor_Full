@@ -94,13 +94,13 @@ class Predictor:
         resultados = []
         for e in self.numeros_acertados:
             resultados.append(
-                f"Núm {e.numero} fue ACERTADO, Probabilidad: {e.probabilidad}, Tardancia: {e.tardancia}, Repetidos: {e.repetido}"
+                f"Núm {e.numero} fue ACERTADO, Probabilidad: {e.probabilidad}, Tardancia: {e.tardancia}"
             )
 
         if self.no_salidos:
             for e in self.no_salidos.values():
                 resultados.append(
-                    f"Núm {e.numero} NO SALIÓ, Probabilidad: {e.probabilidad}, Tardancia: {e.tardancia}, Repetidos: {e.repetido}"
+                    f"Núm {e.numero} NO SALIÓ, Probabilidad: {e.probabilidad}, Tardancia: {e.tardancia}"
                 )
 
         return "\n".join(resultados)
@@ -206,7 +206,7 @@ class Predictor:
         for numero in self.historial_predecidos[:]:
             if numero.probabilidad >= umbral:
                 self.historial_predecidos.remove(numero)
-                nuevo_numero = NumeroJugar(numero=numero.numero, probabilidad=numero.probabilidad, repetido=numero.repetido)
+                nuevo_numero = NumeroJugar(numero=numero.numero, probabilidad=numero.probabilidad)
                 self.numeros_a_jugar.append(nuevo_numero)
                 self.contador.incrementar_jugados()
 
