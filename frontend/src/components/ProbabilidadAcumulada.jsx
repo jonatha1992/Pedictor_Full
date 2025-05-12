@@ -3,11 +3,11 @@ import Probabilidades from "./Probabilidades";
 
 
 const ProbabilidadAcumulada = ({ historial, backgroundImage1, maxRepeticiones }) => (
-    <div className="bg-green-200 rounded p-4 flex flex-col h-full">
-        <div className="h-full text-center text-white bg-center bg-cover flex flex-col justify-center items-center" style={{ backgroundImage: `url(${backgroundImage1})` }}>
+    <div className="flex flex-col h-full p-4 bg-green-200 rounded">
+        <div className="flex flex-col items-center justify-center h-full text-center text-white bg-center bg-cover"  >
             <Probabilidades historial={historial} maxRepeticiones={maxRepeticiones} />
         </div>
-    </div>
+    </div >
 );
 
 export default ProbabilidadAcumulada;

@@ -12,7 +12,7 @@ const NumerosJugados = ({ numerosSeleccionados }) => (
                     return (
                         <button
                             key={index}
-                            className={`h-10 w-10 rounded text-white flex items-center justify-center border border-solid border-[#d69747] text-lg font-bold ${colorClass}`}
+                            className={`hover:z-10 hover:scale-125 hover:border-white h-8 w-8 rounded text-white flex items-center justify-center border border-solid border-white text-lg font-bold ${colorClass}`}
                         >
                             {numero}
                         </button>

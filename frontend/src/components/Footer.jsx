@@ -3,15 +3,12 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="bg-primary text-white p-6">
+    <footer className="p-6 text-white bg-primary">
       <div className="container mx-auto text-center">
-        <p>&copy; 2024 AppName. All rights reserved.</p>
-        <div className="flex justify-center space-x-4 mt-4">
-          <a href="#" className="hover:text-highlight">
-            Terms
-          </a>
-          <a href="#" className="hover:text-highlight">
-            Privacy
+        <p>&copy; 2025 Spin predictor. All rights reserved.</p>
+        <div className="flex justify-center mt-4 space-x-4">
+          <a href="/terminos" className="hover:text-highlight">
+            Términos y condiciones
           </a>
         </div>
       </div>

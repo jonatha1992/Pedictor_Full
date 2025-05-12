@@ -12,7 +12,8 @@ const ConfiguracionJuego = ({
     handleSaveConfig,
     crupiers
 }) => (
-    <div className="flex flex-col justify-between p-4 bg-green-700 rounded">
+    <div className="flex flex-col justify-between p-4 bg-green-700 rounded"
+    >
         <button
             className="flex items-center justify-between w-full p-3 font-bold text-white bg-green-600 rounded-t"
             onClick={() => setIsOpen(!isOpen)}
@@ -21,7 +22,8 @@ const ConfiguracionJuego = ({
             <span className={`transform transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}>▼</span>
         </button>
         <Modal isOpen={isModalOpen} onClose={null}>
-            <form onSubmit={handleSubmit} className="p-6 space-y-5 bg-white border border-gray-200 rounded-lg shadow-xl">
+            <form onSubmit={handleSubmit} className="p-6 space-y-5 bg-white border border-gray-200 rounded-lg shadow-xl"
+            >
                 <div>
                     <label className="flex items-center gap-1 text-sm font-semibold text-gray-800">
                         Tipo de Ruleta
@@ -83,12 +85,6 @@ const ConfiguracionJuego = ({
                     <button
                         className="p-2 font-bold text-red-600 transition-all bg-left bg-cover rounded hover:opacity-90"
                         onClick={() => setIsModalOpen(true)}
-                        style={{
-                            backgroundImage: `url(${crupiers})`,
-                            backgroundPositionY: "top",
-                            textShadow: "#ffffff 1px -1px 4px, #ffffff 1px -1px 4px, #ffffff 1px -1px 4px",
-                            boxShadow: "rgba(0, 0, 0, 0.75) -13px 15px 11px 0px",
-                        }}
                     >
                         Reiniciar Juego
                     </button>

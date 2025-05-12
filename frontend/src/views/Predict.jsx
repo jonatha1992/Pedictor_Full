@@ -183,38 +183,46 @@ const Predict = () => {
   };
 
   return (
-    <div className="p-2 bg-green-800 md:h-screen md:p-6">
+    <div className="min-h-screen px-2 py-8 bg-gradient-to-br from-gray-900 via-green-900 to-black md:px-8">
       {showConfigWarning && (
-        <div className="p-4 mb-4 font-bold text-center text-white bg-red-500 rounded animate-pulse">
+        <div className="p-4 mb-4 font-bold text-center text-white bg-red-600 border-2 border-red-300 rounded-lg shadow-lg animate-pulse">
           Debes elegir los parámetros de juego antes de comenzar a jugar.
         </div>
       )}
-      <div className="grid w-full h-full grid-cols-1 grid-rows-4 gap-4 md:grid-cols-2 md:grid-rows-2">
+      <div className="grid w-full h-full max-w-6xl grid-cols-1 grid-rows-4 gap-6 mx-auto md:grid-cols-2 md:grid-rows-2">
         {/* Arriba Izquierda: Configuración del juego */}
-        <ConfiguracionJuego
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
-          gameConfig={gameConfig}
-          handleInputChange={handleInputChange}
-          handleSubmit={handleSubmit}
-          handleSaveConfig={handleSaveConfig}
-          crupiers={crupiers}
-        />
+        <div className="border border-green-700 shadow-2xl rounded-xl bg-gradient-to-br from-green-800 to-green-900">
+          <ConfiguracionJuego
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+            gameConfig={gameConfig}
+            handleInputChange={handleInputChange}
+            handleSubmit={handleSubmit}
+            handleSaveConfig={handleSaveConfig}
+            crupiers={crupiers}
+          />
+        </div>
 
         {/* Arriba Derecha: Probabilidad acumulada por tirada */}
-        <ProbabilidadAcumulada
-          historial={historial}
-          backgroundImage1={backgroundImage1}
-          maxRepeticiones={gameConfig.cantidad_vecinos}
-        />
+        <div className="flex flex-col border border-green-700 shadow-2xl rounded-xl bg-gradient-to-br from-gray-800 to-green-800">
+          <ProbabilidadAcumulada
+            historial={historial}
+            backgroundImage1={backgroundImage1}
+            maxRepeticiones={gameConfig.cantidad_vecinos}
+          />
+        </div>
 
         {/* Abajo Izquierda: Tablero de ruleta */}
-        <TableroRuleta handleNumeroClick={isConfigReady ? handleNumeroClick : () => setShowConfigWarning(true)} />
+        <div className="flex flex-col items-center justify-center border border-green-700 shadow-2xl rounded-xl bg-gradient-to-br from-gray-900 to-green-900">
+          <TableroRuleta handleNumeroClick={isConfigReady ? handleNumeroClick : () => setShowConfigWarning(true)} />
+        </div>
 
         {/* Abajo Derecha: Números jugados */}
-        <NumerosJugados numerosSeleccionados={numerosSeleccionados} />
+        <div className="flex flex-col items-center justify-center border border-green-700 shadow-2xl rounded-xl bg-gradient-to-br from-gray-900 to-green-900">
+          <NumerosJugados numerosSeleccionados={numerosSeleccionados} />
+        </div>
       </div>
     </div>
   );
