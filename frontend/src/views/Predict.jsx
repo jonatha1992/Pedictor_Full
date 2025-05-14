@@ -6,7 +6,8 @@ import ConfiguracionJuego from "../components/ConfiguracionJuego";
 import ProbabilidadAcumulada from "../components/ProbabilidadAcumulada";
 import TableroRuleta from "../components/TableroRuleta";
 import NumerosJugados from "../components/NumerosJugados";
-import crupiers from "../assets/crupiers.webp";
+
+import { vecino1lugar, vecino2lugar, vecinos3lugar, Vecino4lugar } from "../config/vecinos";
 
 const Predict = () => {
   const numbers = Array.from({ length: 37 }, (_, i) => i); // Array de 0 a 36
@@ -16,6 +17,7 @@ const Predict = () => {
   const [historialPredecidos, setHistorialPredecidos] = useState([]); // [{numero, probabilidad}]
   const [numerosAJugar, setNumerosAJugar] = useState([]); // [{numero, probabilidad, tardancia, repetido}]
   const [aciertos, setAciertos] = useState([]);
+  const [aciertosVecinos, setAciertosVecinos] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [gameConfig, setGameConfig] = useState({
@@ -165,7 +167,18 @@ const Predict = () => {
   };
 
 
-  // Procesar número ingresado y marcar aciertos
+
+  // Utilidad para obtener vecinos según la config
+  const getVecinos = (numero, cantidadVecinos) => {
+    let vecinos = [];
+    if (cantidadVecinos >= 1 && vecino1lugar[numero]) vecinos.push(...vecino1lugar[numero]);
+    if (cantidadVecinos >= 2 && vecino2lugar[numero]) vecinos.push(...vecino2lugar[numero]);
+    if (cantidadVecinos >= 3 && vecinos3lugar[numero]) vecinos.push(...vecinos3lugar[numero]);
+    if (cantidadVecinos >= 4 && Vecino4lugar[numero]) vecinos.push(...Vecino4lugar[numero]);
+    return vecinos;
+  };
+
+  // Procesar número ingresado y marcar aciertos y vecinos
   const handleNumeroClick = (numero) => {
     setNumerosSeleccionados((prev) => [...prev, numero]);
 
@@ -176,7 +189,22 @@ const Predict = () => {
         // Eliminar de la lista de jugados
         return prev.filter((_, i) => i !== idx);
       }
-      // Si no es acierto, aumentar tardancia y eliminar si supera el límite
+      // Chequear si es vecino de algún número jugado
+      let aciertoVecino = false;
+      let vecinoPegado = null;
+      for (let jugado of prev) {
+        const vecinos = getVecinos(jugado.numero, gameConfig.cantidad_vecinos);
+        if (vecinos.includes(numero)) {
+          aciertoVecino = true;
+          vecinoPegado = jugado.numero;
+          break;
+        }
+      }
+      if (aciertoVecino) {
+        setAciertosVecinos(a => [...a, { numero, vecinoDe: vecinoPegado }]);
+        // Puedes mostrar un mensaje especial aquí
+      }
+      // Si no es acierto ni vecino, aumentar tardancia y eliminar si supera el límite
       return prev.map(n => {
         if (n.numero !== numero) {
           const nuevaTardancia = n.tardancia + 1;
@@ -226,7 +254,7 @@ const Predict = () => {
 
         {/* Abajo Derecha: Números jugados */}
         <div className="flex flex-col items-center justify-center border border-green-700 shadow-2xl rounded-xl bg-gradient-to-br from-gray-900 to-green-900">
-          <NumerosJugados numerosSeleccionados={numerosSeleccionados} aciertos={aciertos} />
+          <NumerosJugados numerosSeleccionados={numerosSeleccionados} aciertos={aciertos} aciertosVecinos={aciertosVecinos} />
         </div>
       </div>
     </div>

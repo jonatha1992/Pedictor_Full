@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from "react";
 
 
-const NumerosJugados = ({ numerosSeleccionados, aciertos = [] }) => {
+
+const NumerosJugados = ({ numerosSeleccionados, aciertos = [], aciertosVecinos = [] }) => {
     const [mensajePegado, setMensajePegado] = useState(false);
 
     useEffect(() => {
@@ -30,10 +31,11 @@ const NumerosJugados = ({ numerosSeleccionados, aciertos = [] }) => {
                         else if ([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36].includes(numero)) colorClass = "bg-red-600";
                         // Si es acierto, resaltar
                         const isAcierto = aciertos.includes(numero);
+                        const esVecino = aciertosVecinos.some(v => v.numero === numero);
                         return (
                             <span
                                 key={index}
-                                className={`shadow-lg hover:z-10 hover:scale-110 hover:border-white h-8 w-8 rounded-full text-white flex items-center justify-center border-2 border-white text-base font-extrabold transition-all duration-150 ${colorClass} ${isAcierto ? 'ring-4 ring-green-400 animate-pulse' : ''}`}
+                                className={`shadow-lg hover:z-10 hover:scale-110 hover:border-white h-8 w-8 rounded-full text-white flex items-center justify-center border-2 border-white text-base font-extrabold transition-all duration-150 ${colorClass} ${isAcierto ? 'ring-4 ring-green-400 animate-pulse' : ''} ${esVecino ? 'ring-4 ring-blue-400 animate-pulse' : ''}`}
                                 style={{
                                     boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
                                     margin: "2px"
@@ -52,6 +54,11 @@ const NumerosJugados = ({ numerosSeleccionados, aciertos = [] }) => {
                 {aciertos.length > 0 && (
                     <div className="px-4 py-2 mt-3 font-bold text-green-900 bg-green-300 border-2 border-green-600 rounded shadow animate-bounce">
                         ¡Acierto! Números: {aciertos.join(', ')}
+                    </div>
+                )}
+                {aciertosVecinos.length > 0 && (
+                    <div className="px-4 py-2 mt-3 font-bold text-blue-900 bg-blue-200 border-2 border-blue-600 rounded shadow animate-bounce">
+                        ¡Se pegó un vecino! Números: {aciertosVecinos.map(v => `${v.numero} (vecino de ${v.vecinoDe})`).join(', ')}
                     </div>
                 )}
             </div>
