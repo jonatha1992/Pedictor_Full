@@ -1,5 +1,6 @@
+
 import React, { useEffect, useState, useRef } from "react";
-import backgroundImage1 from "../assets/tablero1.jpg"; // Asegúrate de ajustar la ruta según la ubicación de tu imagen
+import backgroundImage1 from "../assets/tablero1.jpg";
 import axios from 'axios';
 import ConfiguracionJuego from "../components/ConfiguracionJuego";
 import ProbabilidadAcumulada from "../components/ProbabilidadAcumulada";
@@ -11,7 +12,10 @@ const Predict = () => {
   const numbers = Array.from({ length: 37 }, (_, i) => i); // Array de 0 a 36
   const [notificaciones, setNotificaciones] = useState([]);
   const [numerosSeleccionados, setNumerosSeleccionados] = useState([]);
-  const [historial, setHistorial] = useState([]); // Historial de probabilidades acumuladas
+  // --- NUEVOS ESTADOS PARA LOGICA DE DOS LISTAS Y ACIERTOS ---
+  const [historialPredecidos, setHistorialPredecidos] = useState([]); // [{numero, probabilidad}]
+  const [numerosAJugar, setNumerosAJugar] = useState([]); // [{numero, probabilidad, tardancia, repetido}]
+  const [aciertos, setAciertos] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [gameConfig, setGameConfig] = useState({
@@ -43,19 +47,13 @@ const Predict = () => {
     }
   }, [isConfigReady, numerosSeleccionados]);
 
-  // Llama al backend cuando hay suficientes números seleccionados y la config está lista
+
+  // --- LOGICA DE DOS LISTAS Y ACIERTOS ---
   useEffect(() => {
     if (!isConfigReady) return;
     const fetchProbabilidades = async () => {
       if (numerosSeleccionados.length >= 8) {
         try {
-          console.log("Enviando consulta al backend con:", {
-            numeros: numerosSeleccionados.slice(-8),
-            parametros: {
-              numeros_anteriores: 8,
-              tipo_ruleta: gameConfig.tipo || "Electromecanica"
-            }
-          });
           const response = await axios.post("http://127.0.0.1:8000/api/games/predict/", {
             numeros: numerosSeleccionados.slice(-8),
             parametros: {
@@ -63,12 +61,10 @@ const Predict = () => {
               tipo_ruleta: gameConfig.tipo || "Electromecanica"
             }
           });
-          console.log("Respuesta del backend:", response.data);
           const probabilidades = response.data.probabilidades;
-          actualizarHistorial(probabilidades);
+          actualizarListas(probabilidades);
         } catch (error) {
           setNotificaciones(prev => [...prev, "Error al consultar el backend"]);
-          console.error("Error al consultar el backend:", error);
         }
       }
     };
@@ -76,49 +72,39 @@ const Predict = () => {
     // eslint-disable-next-line
   }, [numerosSeleccionados, isConfigReady]);
 
-  // Actualiza el historial local acumulando probabilidad
-  const actualizarHistorial = (predicciones) => {
-    setHistorial(prevHistorial => {
-      const nuevoHistorial = [...prevHistorial];
-      const umbral = Number(localStorage.getItem('umbral_probabilidad')) || 0;
-      const tardanzaMax = Number(localStorage.getItem('tardanza_max')) || 7; // o usa gameConfig.tardanza si lo tienes accesible
-      predicciones.forEach(pred => {
-        let probabilidad = pred.probabilidad;
-        if (typeof probabilidad === 'string') probabilidad = parseInt(probabilidad);
-        if (typeof probabilidad === 'number' && probabilidad <= 1) probabilidad = Math.round(probabilidad * 100);
-        if (probabilidad > 100) probabilidad = 100;
-        if (probabilidad < 0) probabilidad = 0;
-        const idx = nuevoHistorial.findIndex(h => h.numero === pred.numero);
-        // Si ya existe en historial
-        if (idx !== -1) {
-          // Si ya está apostando (superó umbral antes)
-          if (nuevoHistorial[idx].probabilidadAcumulada >= umbral) {
-            // Aumentar tardanza
-            nuevoHistorial[idx].tardanza = (nuevoHistorial[idx].tardanza || 0) + 1;
-            // Si supera la tardanza máxima, reiniciar
-            if (nuevoHistorial[idx].tardanza > tardanzaMax) {
-              nuevoHistorial[idx].tardanza = 0;
-              nuevoHistorial[idx].probabilidadAcumulada = 0;
-            } else {
-              nuevoHistorial[idx].probabilidadAcumulada += probabilidad;
-            }
-          } else {
-            // Si no está apostando, solo suma probabilidad y reinicia tardanza
-            nuevoHistorial[idx].probabilidadAcumulada += probabilidad;
-            nuevoHistorial[idx].tardanza = 0;
-          }
-        } else {
-          // Nuevo número
-          nuevoHistorial.push({
-            numero: pred.numero,
-            probabilidadAcumulada: probabilidad,
-            tardanza: 0
-          });
-        }
-      });
-      console.log("Historial actualizado:", nuevoHistorial);
-      return nuevoHistorial;
+  // Actualiza historialPredecidos y numerosAJugar
+  const actualizarListas = (predicciones) => {
+    const umbral = Number(gameConfig.umbral_probabilidad) || 0;
+    let nuevoHistorial = [...historialPredecidos];
+    let nuevosAJugar = [...numerosAJugar];
+
+    predicciones.forEach(pred => {
+      let probabilidad = pred.probabilidad;
+      if (typeof probabilidad === 'string') probabilidad = parseInt(probabilidad);
+      if (typeof probabilidad === 'number' && probabilidad <= 1) probabilidad = Math.round(probabilidad * 100);
+      if (probabilidad > 100) probabilidad = 100;
+      if (probabilidad < 0) probabilidad = 0;
+      const idx = nuevoHistorial.findIndex(h => h.numero === pred.numero);
+      if (idx !== -1) {
+        nuevoHistorial[idx].probabilidad = probabilidad;
+      } else {
+        nuevoHistorial.push({ numero: pred.numero, probabilidad });
+      }
     });
+
+    // Mover a jugados si supera umbral
+    nuevoHistorial = nuevoHistorial.filter(h => {
+      if (h.probabilidad >= umbral) {
+        if (!nuevosAJugar.some(j => j.numero === h.numero)) {
+          nuevosAJugar.push({ ...h, tardancia: 0, repetido: false });
+        }
+        return false;
+      }
+      return true;
+    });
+
+    setHistorialPredecidos(nuevoHistorial);
+    setNumerosAJugar(nuevosAJugar);
   };
 
   const handleInputChange = (e) => {
@@ -178,8 +164,27 @@ const Predict = () => {
     setNotificaciones((prev) => [...prev, mensaje]);
   };
 
+
+  // Procesar número ingresado y marcar aciertos
   const handleNumeroClick = (numero) => {
     setNumerosSeleccionados((prev) => [...prev, numero]);
+
+    setNumerosAJugar(prev => {
+      const idx = prev.findIndex(n => n.numero === numero);
+      if (idx !== -1) {
+        setAciertos(a => [...a, numero]);
+        // Eliminar de la lista de jugados
+        return prev.filter((_, i) => i !== idx);
+      }
+      // Si no es acierto, aumentar tardancia y eliminar si supera el límite
+      return prev.map(n => {
+        if (n.numero !== numero) {
+          const nuevaTardancia = n.tardancia + 1;
+          return { ...n, tardancia: nuevaTardancia };
+        }
+        return n;
+      }).filter(n => n.tardancia <= (gameConfig.tardanza || 7));
+    });
   };
 
   return (
@@ -208,7 +213,7 @@ const Predict = () => {
         {/* Arriba Derecha: Probabilidad acumulada por tirada */}
         <div className="flex flex-col border border-green-700 shadow-2xl rounded-xl bg-gradient-to-br from-gray-800 to-green-800">
           <ProbabilidadAcumulada
-            historial={historial}
+            historial={historialPredecidos}
             backgroundImage1={backgroundImage1}
             maxRepeticiones={gameConfig.cantidad_vecinos}
           />
@@ -221,7 +226,7 @@ const Predict = () => {
 
         {/* Abajo Derecha: Números jugados */}
         <div className="flex flex-col items-center justify-center border border-green-700 shadow-2xl rounded-xl bg-gradient-to-br from-gray-900 to-green-900">
-          <NumerosJugados numerosSeleccionados={numerosSeleccionados} />
+          <NumerosJugados numerosSeleccionados={numerosSeleccionados} aciertos={aciertos} />
         </div>
       </div>
     </div>

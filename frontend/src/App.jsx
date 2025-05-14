@@ -18,7 +18,7 @@ import Terminos from "./views/Terminos";
 const App = () => {
   return (
     <Router>
-      <div className="px-4 mx-auto container-fluid">
+      <div className="mx-auto ">
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
