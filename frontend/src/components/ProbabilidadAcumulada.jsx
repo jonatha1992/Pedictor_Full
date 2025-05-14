@@ -2,9 +2,19 @@ import React from "react";
 
 
 const ProbabilidadTabla = ({ historial, maxRepeticiones }) => {
-    const sorted = [...historial].sort((a, b) => b.probabilidadAcumulada - a.probabilidadAcumulada);
+    // DEBUG: Mostrar qué llega realmente
+    console.log('[ProbabilidadAcumulada] Recibe historial:', historial);
+    // Si los objetos no tienen probabilidadAcumulada, usar probabilidad
+    const sorted = [...historial].sort((a, b) => {
+        const pa = typeof a.probabilidadAcumulada !== 'undefined' ? a.probabilidadAcumulada : a.probabilidad;
+        const pb = typeof b.probabilidadAcumulada !== 'undefined' ? b.probabilidadAcumulada : b.probabilidad;
+        return pb - pa;
+    });
     const umbral = Number(localStorage.getItem('umbral_probabilidad')) || 0;
-    const filtrados = sorted.filter(item => item.probabilidadAcumulada >= umbral);
+    const filtrados = sorted.filter(item => {
+        const prob = typeof item.probabilidadAcumulada !== 'undefined' ? item.probabilidadAcumulada : item.probabilidad;
+        return prob >= umbral;
+    });
     return (
         <div className="flex items-center justify-center">
             <div className="w-full p-2">
@@ -19,7 +29,7 @@ const ProbabilidadTabla = ({ historial, maxRepeticiones }) => {
                         </thead>
                         <tbody>
                             {filtrados.map((item, idx) => {
-                                const porcentaje = item.probabilidadAcumulada;
+                                const porcentaje = typeof item.probabilidadAcumulada !== 'undefined' ? item.probabilidadAcumulada : item.probabilidad;
                                 let tardanza = null;
                                 if (typeof item.tardancia !== 'undefined') tardanza = item.tardancia;
                                 else if (typeof item.tardanza !== 'undefined') tardanza = item.tardanza;

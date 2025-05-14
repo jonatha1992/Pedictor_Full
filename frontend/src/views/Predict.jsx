@@ -6,8 +6,8 @@ import ConfiguracionJuego from "../components/ConfiguracionJuego";
 import ProbabilidadAcumulada from "../components/ProbabilidadAcumulada";
 import TableroRuleta from "../components/TableroRuleta";
 import NumerosJugados from "../components/NumerosJugados";
-
 import { vecino1lugar, vecino2lugar, vecinos3lugar, Vecino4lugar } from "../config/vecinos";
+import crupiers from "../assets/crupiers.webp";
 
 const Predict = () => {
   const numbers = Array.from({ length: 37 }, (_, i) => i); // Array de 0 a 36
@@ -56,6 +56,13 @@ const Predict = () => {
     const fetchProbabilidades = async () => {
       if (numerosSeleccionados.length >= 8) {
         try {
+          console.log("[Consulta] Enviando al backend:", {
+            numeros: numerosSeleccionados.slice(-8),
+            parametros: {
+              numeros_anteriores: 8,
+              tipo_ruleta: gameConfig.tipo || "Electromecanica"
+            }
+          });
           const response = await axios.post("http://127.0.0.1:8000/api/games/predict/", {
             numeros: numerosSeleccionados.slice(-8),
             parametros: {
@@ -63,11 +70,15 @@ const Predict = () => {
               tipo_ruleta: gameConfig.tipo || "Electromecanica"
             }
           });
+          console.log("[Consulta] Respuesta del backend:", response.data);
           const probabilidades = response.data.probabilidades;
           actualizarListas(probabilidades);
         } catch (error) {
           setNotificaciones(prev => [...prev, "Error al consultar el backend"]);
+          console.error("[Consulta] Error al consultar el backend:", error);
         }
+      } else {
+        console.log("[Consulta] No se consulta al backend, faltan números seleccionados:", numerosSeleccionados);
       }
     };
     fetchProbabilidades();
@@ -76,6 +87,7 @@ const Predict = () => {
 
   // Actualiza historialPredecidos y numerosAJugar
   const actualizarListas = (predicciones) => {
+    console.log("[ActualizarListas] Predicciones recibidas:", predicciones);
     const umbral = Number(gameConfig.umbral_probabilidad) || 0;
     let nuevoHistorial = [...historialPredecidos];
     let nuevosAJugar = [...numerosAJugar];
@@ -105,6 +117,8 @@ const Predict = () => {
       return true;
     });
 
+    console.log("[ActualizarListas] Nuevo historial:", nuevoHistorial);
+    console.log("[ActualizarListas] Números a jugar:", nuevosAJugar);
     setHistorialPredecidos(nuevoHistorial);
     setNumerosAJugar(nuevosAJugar);
   };
@@ -186,23 +200,30 @@ const Predict = () => {
       const idx = prev.findIndex(n => n.numero === numero);
       if (idx !== -1) {
         setAciertos(a => [...a, numero]);
+        console.log(`[Acierto Directo] Número ${numero} estaba en jugados. Lista antes:`, prev.map(n => n.numero));
         // Eliminar de la lista de jugados
         return prev.filter((_, i) => i !== idx);
       }
-      // Chequear si es vecino de algún número jugado
+      // Chequear si es vecino de algún número jugado (según la config actual)
+      // Solo si NO es acierto directo y NO está ya en aciertosVecinos
       let aciertoVecino = false;
       let vecinoPegado = null;
       for (let jugado of prev) {
+        // Solo revisa vecinos de los números actualmente en juego
         const vecinos = getVecinos(jugado.numero, gameConfig.cantidad_vecinos);
+        console.log(`[Vecino] Revisando si ${numero} es vecino de ${jugado.numero}. Vecinos:`, vecinos);
         if (vecinos.includes(numero)) {
-          aciertoVecino = true;
-          vecinoPegado = jugado.numero;
-          break;
+          // Chequear que no esté ya en aciertosVecinos ni en aciertos
+          if (!aciertosVecinos.some(v => v.numero === numero) && !aciertos.includes(numero)) {
+            aciertoVecino = true;
+            vecinoPegado = jugado.numero;
+            break;
+          }
         }
       }
       if (aciertoVecino) {
         setAciertosVecinos(a => [...a, { numero, vecinoDe: vecinoPegado }]);
-        // Puedes mostrar un mensaje especial aquí
+        console.log(`[Acierto Vecino] Número ${numero} es vecino de ${vecinoPegado}. Lista jugados:`, prev.map(n => n.numero));
       }
       // Si no es acierto ni vecino, aumentar tardancia y eliminar si supera el límite
       return prev.map(n => {
@@ -241,7 +262,7 @@ const Predict = () => {
         {/* Arriba Derecha: Probabilidad acumulada por tirada */}
         <div className="flex flex-col border border-green-700 shadow-2xl rounded-xl bg-gradient-to-br from-gray-800 to-green-800">
           <ProbabilidadAcumulada
-            historial={historialPredecidos}
+            historial={numerosAJugar}
             backgroundImage1={backgroundImage1}
             maxRepeticiones={gameConfig.cantidad_vecinos}
           />
