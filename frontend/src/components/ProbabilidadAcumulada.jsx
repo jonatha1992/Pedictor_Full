@@ -1,10 +1,6 @@
 import React from "react";
 
-
 const ProbabilidadTabla = ({ historial, maxRepeticiones }) => {
-    // DEBUG: Mostrar qué llega realmente
-    console.log('[ProbabilidadAcumulada] Recibe historial:', historial);
-    // Si los objetos no tienen probabilidadAcumulada, usar probabilidad
     const sorted = [...historial].sort((a, b) => {
         const pa = typeof a.probabilidadAcumulada !== 'undefined' ? a.probabilidadAcumulada : a.probabilidad;
         const pb = typeof b.probabilidadAcumulada !== 'undefined' ? b.probabilidadAcumulada : b.probabilidad;
@@ -16,20 +12,21 @@ const ProbabilidadTabla = ({ historial, maxRepeticiones }) => {
         return prob >= umbral;
     });
     return (
-        <div className="flex items-center justify-center">
-            <div className="w-full p-2">
-                <div className="overflow-x-auto max-h-[30vh]">
-                    <table className="w-full min-w-[220px] rounded-xl shadow-lg text-xs bg-white border border-gray-200">
+        <div className="flex items-start justify-center">
+            <div className="w-full p-0 md:p-2">
+                <div className="overflow-x-auto max-h-[22vh]">
+                    <table className="w-full min-w-[180px] rounded shadow text-xs bg-white border border-gray-200">
                         <thead className="sticky top-0 z-10 bg-gray-100 border-b border-gray-300">
                             <tr className="text-center">
                                 <th className="px-2 py-1 font-semibold text-gray-700">Nro</th>
-                                <th className="px-2 py-1 font-semibold text-gray-700">% Prob</th>
+                                <th className="px-2 py-1 font-semibold text-gray-700">Probabilidad</th>
                                 <th className="px-2 py-1 font-semibold text-gray-700">Tardanza</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filtrados.map((item, idx) => {
-                                const porcentaje = typeof item.probabilidadAcumulada !== 'undefined' ? item.probabilidadAcumulada : item.probabilidad;
+                                let porcentaje = typeof item.probabilidadAcumulada !== 'undefined' ? item.probabilidadAcumulada : item.probabilidad;
+                                porcentaje = Math.round(porcentaje);
                                 let tardanza = null;
                                 if (typeof item.tardancia !== 'undefined') tardanza = item.tardancia;
                                 else if (typeof item.tardanza !== 'undefined') tardanza = item.tardanza;
@@ -56,11 +53,10 @@ const ProbabilidadTabla = ({ historial, maxRepeticiones }) => {
 };
 
 const ProbabilidadAcumulada = ({ historial, maxRepeticiones }) => (
-    <div className="flex flex-col h-full p-2 border border-green-300 shadow rounded-xl">
-        <div className="flex flex-col items-center justify-center h-full text-center bg-center bg-cover">
-            <h3 className="w-full pb-1 mb-2 text-base font-extrabold tracking-wide text-center text-gray-700 uppercase border-b-2 border-gray-300">Probabilidad Acumulada</h3>
-            <ProbabilidadTabla historial={historial} maxRepeticiones={maxRepeticiones} />
-        </div>
+
+    <div className="flex flex-col items-center justify-start h-full text-center bg-center bg-cover">
+        <h3 className="w-full pb-1 mb-1 text-base font-extrabold tracking-wide text-center text-green-200 uppercase border-b border-green-400">Números a Jugar</h3>
+        <ProbabilidadTabla historial={historial} maxRepeticiones={maxRepeticiones} />
     </div>
 );
 

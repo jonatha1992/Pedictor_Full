@@ -1,5 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import Modal from "./Modal";
+
+const iconos = {
+    tipo: (
+        <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
+    ),
+    nombre: (
+        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 20l9-5-9-5-9 5 9 5z" /><path d="M12 12V4" /></svg>
+    ),
+    tardanza: (
+        <svg className="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
+    ),
+    vecinos: (
+        <svg className="w-5 h-5 text-pink-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M8 12h8" /></svg>
+    ),
+    umbral: (
+        <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M12 8v4l3 3" /></svg>
+    ),
+};
 
 const ConfiguracionJuego = ({
     isOpen,
@@ -11,79 +29,107 @@ const ConfiguracionJuego = ({
     handleSubmit,
     handleSaveConfig,
     crupiers
-}) => (
-    <div className="flex flex-col justify-between p-4 bg-green-700 rounded"
-    >
-        <button
-            className="flex items-center justify-between w-full p-3 font-bold text-white bg-green-600 rounded-t"
-            onClick={() => setIsOpen(!isOpen)}
-        >
-            <span>Configuración del juego</span>
-            <span className={`transform transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}>▼</span>
-        </button>
-        <Modal isOpen={isModalOpen} onClose={null}>
-            <form onSubmit={handleSubmit} className="p-6 space-y-5 bg-white border border-gray-200 rounded-lg shadow-xl"
+}) => {
+    const [errores, setErrores] = useState({});
+
+    // Validación simple
+    const validar = (name, value) => {
+        let error = "";
+        if (name === "nombre_ruleta" && !value) error = "El nombre es obligatorio";
+        if (name === "tardanza" && (value < 1 || value > 20)) error = "Debe ser entre 1 y 20";
+        if (name === "cantidad_vecinos" && (value < 0 || value > 4)) error = "Debe ser entre 0 y 4";
+        if (name === "umbral_probabilidad" && (value < 0 || value > 100)) error = "Debe ser entre 0 y 100";
+        setErrores(prev => ({ ...prev, [name]: error }));
+    };
+
+    const onInputChange = (e) => {
+        handleInputChange(e);
+        validar(e.target.name, e.target.value);
+    };
+
+    return (
+        <div className="flex flex-col justify-between p-2 md:p-3 rounded-lg shadow bg-gradient-to-br from-green-800 to-green-700 min-w-[200px] max-w-[320px] mx-auto">
+            <button
+                className="flex items-center justify-between w-full px-2 py-2 text-base font-bold text-white bg-green-600 shadow rounded-t-md md:text-lg"
+                onClick={() => setIsOpen(!isOpen)}
             >
-                <div>
-                    <label className="flex items-center gap-1 text-sm font-semibold text-gray-800">
-                        Tipo de Ruleta
-                        <span className="text-gray-400 cursor-pointer" title="Ejemplo: Electromecánica. Elige el tipo de ruleta.">?</span>
-                    </label>
-                    <select
-                        name="tipo"
-                        value={gameConfig.tipo}
-                        onChange={handleInputChange}
-                        className="block w-full p-2 mt-1 transition border border-gray-300 rounded focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"
-                        required
-                    >
-                        <option value="">Selecciona un tipo</option>
-                        <option value="Electromecanica">Electromecánica</option>
-                    </select>
-                </div>
-                <div>
-                    <label className="flex items-center gap-1 text-sm font-semibold text-gray-800">
-                        Nombre de la Ruleta
-                        <span className="text-gray-400 cursor-pointer" title="Identifica tu ruleta.">?</span>
-                    </label>
-                    <input type="text" name="nombre_ruleta" value={gameConfig.nombre_ruleta} onChange={handleInputChange} className="block w-full p-2 mt-1 transition border border-gray-300 rounded focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400" required />
-                </div>
-                <div>
-                    <label className="flex items-center gap-1 text-sm font-semibold text-gray-800">
-                        Tardanza (jugadas)
-                        <span className="text-gray-400 cursor-pointer" title="Si un número no sale en este número de jugadas, su probabilidad se reinicia.">?</span>
-                    </label>
-                    <input type="number" name="tardanza" value={gameConfig.tardanza} onChange={handleInputChange} className="block w-full p-2 mt-1 transition border border-gray-300 rounded focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400" required />
-                </div>
-                <div>
-                    <label className="flex items-center gap-1 text-sm font-semibold text-gray-800">
-                        Cantidad de Vecinos
-                        <span className="text-gray-400 cursor-pointer" title="Números laterales considerados en la predicción.">?</span>
-                    </label>
-                    <input type="number" name="cantidad_vecinos" value={gameConfig.cantidad_vecinos} onChange={handleInputChange} className="block w-full p-2 mt-1 transition border border-gray-300 rounded focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400" required />
-                </div>
-                <div>
-                    <label className="flex items-center gap-1 text-sm font-semibold text-gray-800">
-                        Umbral de Probabilidad (%)
-                        <span className="text-gray-400 cursor-pointer" title="Probabilidad mínima (entera, sin decimales) para sugerir un número. Ejemplo: 50">?</span>
-                    </label>
-                    <input type="number" name="umbral_probabilidad" value={gameConfig.umbral_probabilidad} onChange={handleInputChange} min="0" max="100" step="1" className="block w-full p-2 mt-1 transition border border-gray-300 rounded focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400" required />
-                </div>
-                <button onClick={handleSaveConfig} type="submit" className="w-full py-2 font-semibold text-white transition bg-indigo-600 rounded hover:bg-indigo-700">Guardar Configuración</button>
-            </form>
-        </Modal>
-        {/* Config siempre visible en desktop, acordeón en mobile */}
-        <div className={`transition-all duration-300 ease-in-out overflow-hidden md:max-h-full md:opacity-100 md:overflow-visible ${isOpen ? "max-h-[200px] opacity-100" : "max-h-0 opacity-0"}`}>
-            <div className="p-4 bg-green-900 rounded-b">
-                <div className="flex flex-col items-start justify-center text-xs font-bold text-white">
-                    <p>Tipo de ruleta: {gameConfig.tipo}</p>
-                    <p>Nombre de ruleta: {gameConfig.nombre_ruleta}</p>
-                    <p>Cantidad de vecinos: {gameConfig.cantidad_vecinos}</p>
-                    <p>Tardanza (jugadas): {gameConfig.tardanza}</p>
-                    <p>Umbral de probabilidad: {gameConfig.umbral_probabilidad}%</p>
-                </div>
-                <div className="flex flex-col mt-2">
+                <span className="flex items-center gap-2">
+                    <svg className="w-5 h-5 text-white md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
+                    Configuración del juego
+                </span>
+                {/* Flecha visible solo en mobile */}
+                <span className={`md:hidden transform transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}>▼</span>
+            </button>
+            <Modal isOpen={isModalOpen} onClose={null}>
+                <form onSubmit={handleSubmit} className="p-2 text-sm bg-white border border-gray-200 rounded-lg shadow-xl md:p-4 md:text-base">
+                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-4">
+                        <div>
+                            <label className="flex items-center gap-2 text-xs font-semibold text-gray-800 md:text-sm">
+                                {iconos.tipo} Tipo de Ruleta
+                                <span className="text-gray-400 cursor-pointer" title="Ejemplo: Electromecánica. Elige el tipo de ruleta.">?</span>
+                            </label>
+                            <select
+                                name="tipo"
+                                value={gameConfig.tipo}
+                                onChange={onInputChange}
+                                className="block w-full p-2 mt-1 transition border border-gray-300 rounded focus:ring-2 focus:ring-green-400 focus:border-green-400"
+                                required
+                            >
+                                <option value="">Selecciona un tipo</option>
+                                <option value="Electromecanica">Electromecánica</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="flex items-center gap-2 text-xs font-semibold text-gray-800 md:text-sm">
+                                {iconos.nombre} Nombre de la Ruleta
+                                <span className="text-gray-400 cursor-pointer" title="Identifica tu ruleta.">?</span>
+                            </label>
+                            <input type="text" name="nombre_ruleta" value={gameConfig.nombre_ruleta} onChange={onInputChange} className={`block w-full p-2 mt-1 transition border ${errores.nombre_ruleta ? "border-red-500" : "border-gray-300"} rounded focus:ring-2 focus:ring-blue-400 focus:border-blue-400`} required />
+                            {errores.nombre_ruleta && <span className="text-xs text-red-500">{errores.nombre_ruleta}</span>}
+                        </div>
+                        <div>
+                            <label className="flex items-center gap-2 text-xs font-semibold text-gray-800 md:text-sm">
+                                {iconos.tardanza} Tardanza (jugadas)
+                                <span className="text-gray-400 cursor-pointer" title="Si un número no sale en este número de jugadas, su probabilidad se reinicia.">?</span>
+                            </label>
+                            <input type="number" name="tardanza" value={gameConfig.tardanza} onChange={onInputChange} className={`block w-full p-2 mt-1 transition border ${errores.tardanza ? "border-red-500" : "border-gray-300"} rounded focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400`} required />
+                            {errores.tardanza && <span className="text-xs text-red-500">{errores.tardanza}</span>}
+                        </div>
+                        <div>
+                            <label className="flex items-center gap-2 text-xs font-semibold text-gray-800 md:text-sm">
+                                {iconos.vecinos} Cantidad de Vecinos
+                                <span className="text-gray-400 cursor-pointer" title="Números laterales considerados en la predicción.">?</span>
+                            </label>
+                            <input type="number" name="cantidad_vecinos" value={gameConfig.cantidad_vecinos} onChange={onInputChange} className={`block w-full p-2 mt-1 transition border ${errores.cantidad_vecinos ? "border-red-500" : "border-gray-300"} rounded focus:ring-2 focus:ring-pink-400 focus:border-pink-400`} required />
+                            {errores.cantidad_vecinos && <span className="text-xs text-red-500">{errores.cantidad_vecinos}</span>}
+                        </div>
+                        <div className="md:col-span-2">
+                            <label className="flex items-center gap-2 text-xs font-semibold text-gray-800 md:text-sm">
+                                {iconos.umbral} Umbral de Probabilidad (%)
+                                <span className="text-gray-400 cursor-pointer" title="Probabilidad mínima (entera, sin decimales) para sugerir un número. Ejemplo: 50">?</span>
+                            </label>
+                            <input type="number" name="umbral_probabilidad" value={gameConfig.umbral_probabilidad} onChange={onInputChange} min="0" max="100" step="1" className={`block w-full p-2 mt-1 transition border ${errores.umbral_probabilidad ? "border-red-500" : "border-gray-300"} rounded focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400`} required />
+                            {errores.umbral_probabilidad && <span className="text-xs text-red-500">{errores.umbral_probabilidad}</span>}
+                        </div>
+                    </div>
+                    <button onClick={handleSaveConfig} type="submit" className="flex items-center justify-center w-full gap-2 py-2 mt-4 text-sm font-semibold text-white transition rounded shadow-lg bg-gradient-to-r from-green-600 to-indigo-600 hover:from-green-700 hover:to-indigo-700 md:text-base">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></svg>
+                        Guardar Configuración
+                    </button>
+                </form>
+            </Modal>
+            {/* Config siempre visible en desktop, acordeón en mobile */}
+            <div className={`transition-all duration-300 ease-in-out overflow-hidden md:max-h-full md:opacity-100 md:overflow-visible ${isOpen ? "max-h-[120px] opacity-100" : "max-h-0 opacity-0"}`}>
+                <div className="flex flex-col gap-1 p-2 bg-green-900 md:p-3 rounded-b-md">
+                    <div className="flex flex-col items-start justify-center gap-1 text-xs font-bold text-white">
+                        <span className="inline-flex items-center gap-1"><span className="font-bold">Tipo:</span> <span className="bg-green-700 px-2 py-0.5 rounded text-xs">{gameConfig.tipo}</span></span>
+                        <span className="inline-flex items-center gap-1"><span className="font-bold">Ruleta:</span> <span className="bg-blue-700 px-2 py-0.5 rounded text-xs">{gameConfig.nombre_ruleta}</span></span>
+                        <span className="inline-flex items-center gap-1"><span className="font-bold">Vecinos:</span> <span className="bg-pink-700 px-2 py-0.5 rounded text-xs">{gameConfig.cantidad_vecinos}</span></span>
+                        <span className="inline-flex items-center gap-1"><span className="font-bold">Tardanza:</span> <span className="bg-yellow-700 px-2 py-0.5 rounded text-xs">{gameConfig.tardanza}</span></span>
+                        <span className="inline-flex items-center gap-1"><span className="font-bold">Umbral:</span> <span className="bg-indigo-700 px-2 py-0.5 rounded text-xs">{gameConfig.umbral_probabilidad}%</span></span>
+                    </div>
                     <button
-                        className="p-2 font-bold text-red-600 transition-all bg-left bg-cover rounded hover:opacity-90"
+                        className="p-2 mt-2 text-xs font-bold text-red-600 transition-all bg-red-100 bg-left bg-cover border border-red-400 rounded hover:opacity-90 md:text-base"
                         onClick={() => setIsModalOpen(true)}
                     >
                         Reiniciar Juego
@@ -91,7 +137,7 @@ const ConfiguracionJuego = ({
                 </div>
             </div>
         </div>
-    </div>
-);
+    );
+};
 
 export default ConfiguracionJuego;

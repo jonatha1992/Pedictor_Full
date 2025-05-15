@@ -46,11 +46,7 @@ const NumerosJugados = ({ numerosSeleccionados, aciertos = [], aciertosVecinos =
                         );
                     })}
                 </div>
-                {mensajePegado && (
-                    <div className="px-4 py-2 mt-3 font-bold text-yellow-900 bg-yellow-400 border-2 border-yellow-600 rounded shadow animate-bounce">
-                        ¡Se pegó!
-                    </div>
-                )}
+                {/* Eliminada la notificación amarilla de '¡Se pegó!' para evitar confusión */}
                 {aciertos.length > 0 && (
                     <div className="px-4 py-2 mt-3 font-bold text-green-900 bg-green-300 border-2 border-green-600 rounded shadow animate-bounce">
                         ¡Acierto! Números: {aciertos.join(', ')}
