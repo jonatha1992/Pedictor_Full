@@ -48,9 +48,9 @@ const ConfiguracionJuego = ({
     };
 
     return (
-        <div className="flex flex-col justify-between p-2 md:p-3 rounded-lg shadow bg-gradient-to-br from-green-800 to-green-700 min-w-[200px] max-w-[320px] mx-auto">
+        <div className="flex flex-col justify-between p-2 md:p-4 rounded-xl shadow-2xl border border-green-700 bg-gradient-to-br from-green-800 to-green-900 min-w-[220px] max-w-[350px] mx-auto h-full">
             <button
-                className="flex items-center justify-between w-full px-2 py-2 text-base font-bold text-white bg-green-600 shadow rounded-t-md md:text-lg"
+                className="flex items-center justify-between w-full px-2 py-2 text-base font-bold text-white bg-green-700 shadow rounded-t-xl md:text-lg"
                 onClick={() => setIsOpen(!isOpen)}
             >
                 <span className="flex items-center gap-2">
@@ -112,15 +112,15 @@ const ConfiguracionJuego = ({
                             {errores.umbral_probabilidad && <span className="text-xs text-red-500">{errores.umbral_probabilidad}</span>}
                         </div>
                     </div>
-                    <button onClick={handleSaveConfig} type="submit" className="flex items-center justify-center w-full gap-2 py-2 mt-4 text-sm font-semibold text-white transition rounded shadow-lg bg-gradient-to-r from-green-600 to-indigo-600 hover:from-green-700 hover:to-indigo-700 md:text-base">
+                    <button onClick={handleSaveConfig} type="submit" className="flex items-center justify-center w-full gap-2 py-2 mt-4 text-sm font-semibold text-white transition rounded shadow-lg bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 md:text-base">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></svg>
                         Guardar Configuración
                     </button>
                 </form>
             </Modal>
             {/* Config siempre visible en desktop, acordeón en mobile */}
-            <div className={`transition-all duration-300 ease-in-out overflow-hidden md:max-h-full md:opacity-100 md:overflow-visible ${isOpen ? "max-h-[120px] opacity-100" : "max-h-0 opacity-0"}`}>
-                <div className="flex flex-col gap-1 p-2 bg-green-900 md:p-3 rounded-b-md">
+            <div className={`transition-all duration-300 ease-in-out overflow-hidden md:max-h-full md:opacity-100 md:overflow-visible ${isOpen ? "max-h-[140px] opacity-100" : "max-h-0 opacity-0"}`}>
+                <div className="flex flex-col gap-1 p-2 border-t border-green-700 bg-gradient-to-br from-green-800 to-green-900 md:p-3 rounded-b-xl">
                     <div className="flex flex-col items-start justify-center gap-1 text-xs font-bold text-white">
                         <span className="inline-flex items-center gap-1"><span className="font-bold">Tipo:</span> <span className="bg-green-700 px-2 py-0.5 rounded text-xs">{gameConfig.tipo}</span></span>
                         <span className="inline-flex items-center gap-1"><span className="font-bold">Ruleta:</span> <span className="bg-blue-700 px-2 py-0.5 rounded text-xs">{gameConfig.nombre_ruleta}</span></span>
@@ -129,7 +129,7 @@ const ConfiguracionJuego = ({
                         <span className="inline-flex items-center gap-1"><span className="font-bold">Umbral:</span> <span className="bg-indigo-700 px-2 py-0.5 rounded text-xs">{gameConfig.umbral_probabilidad}%</span></span>
                     </div>
                     <button
-                        className="p-2 mt-2 text-xs font-bold text-red-600 transition-all bg-red-100 bg-left bg-cover border border-red-400 rounded hover:opacity-90 md:text-base"
+                        className="p-2 mt-2 text-xs font-bold text-white transition-all border border-green-700 rounded shadow bg-gradient-to-r from-green-600 to-green-900 hover:opacity-90 md:text-base"
                         onClick={() => setIsModalOpen(true)}
                     >
                         Reiniciar Juego

@@ -325,19 +325,17 @@ const Predict = () => {
       <div className="grid w-full h-full max-w-6xl grid-cols-1 grid-rows-4 gap-6 mx-auto md:grid-cols-2 md:grid-rows-2">
         {/* Arriba Izquierda: Configuración del juego */}
         <div className="flex flex-row gap-2">
-          <div className="flex-1 border border-green-700 shadow-2xl rounded-xl bg-gradient-to-br from-green-800 to-green-900">
-            <ConfiguracionJuego
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
-              isModalOpen={isModalOpen}
-              setIsModalOpen={setIsModalOpen}
-              gameConfig={gameConfig}
-              handleInputChange={handleInputChange}
-              handleSubmit={handleSubmit}
-              handleSaveConfig={handleSaveConfig}
-              crupiers={crupiers}
-            />
-          </div>
+          <ConfiguracionJuego
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+            gameConfig={gameConfig}
+            handleInputChange={handleInputChange}
+            handleSubmit={handleSubmit}
+            handleSaveConfig={handleSaveConfig}
+            crupiers={crupiers}
+          />
           <div className="flex-1">
             <EstadisticasJuego contador={contador} />
           </div>
@@ -362,7 +360,7 @@ const Predict = () => {
           <NumerosJugados numerosSeleccionados={numerosSeleccionados} aciertos={aciertos} aciertosVecinos={aciertosVecinos} />
         </div>
       </div>
-    </div>
+    </div >
   );
 
 
