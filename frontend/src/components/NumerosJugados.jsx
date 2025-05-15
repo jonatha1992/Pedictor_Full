@@ -21,9 +21,9 @@ const NumerosJugados = ({ numerosSeleccionados, aciertos = [], aciertosVecinos =
     }, [numerosSeleccionados]);
 
     return (
-        <div className="flex flex-col items-center justify-center p-4 bg-green-900 rounded">
+        <div className="flex flex-col items-center justify-center p-4 rounded">
             <div className="flex flex-col items-center w-full">
-                <p className="px-2 mb-2 text-white whitespace-nowrap">Últimos resultados:</p>
+                <h3 className="w-full pb-1 mb-1 text-xl font-extrabold tracking-wide text-center text-green-200 uppercase border-b border-green-400">Últimos resultados</h3>
                 <div className="flex flex-row flex-wrap items-center justify-center w-full gap-1">
                     {numerosSeleccionados.slice().reverse().map((numero, index) => {
                         let colorClass = "bg-black";
@@ -46,12 +46,6 @@ const NumerosJugados = ({ numerosSeleccionados, aciertos = [], aciertosVecinos =
                         );
                     })}
                 </div>
-                {/* Eliminada la notificación amarilla de '¡Se pegó!' para evitar confusión */}
-                {aciertos.length > 0 && (
-                    <div className="px-4 py-2 mt-3 font-bold text-green-900 bg-green-300 border-2 border-green-600 rounded shadow animate-bounce">
-                        ¡Acierto! Números: {aciertos.join(', ')}
-                    </div>
-                )}
                 {aciertosVecinos.length > 0 && (
                     <div className="px-4 py-2 mt-3 font-bold text-blue-900 bg-blue-200 border-2 border-blue-600 rounded shadow animate-bounce">
                         ¡Se pegó un vecino! Números: {aciertosVecinos.map(v => `${v.numero} (vecino de ${v.vecinoDe})`).join(', ')}

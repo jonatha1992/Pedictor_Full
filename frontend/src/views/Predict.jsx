@@ -322,7 +322,7 @@ const Predict = () => {
           Debes elegir los parámetros de juego antes de comenzar a jugar.
         </div>
       )}
-      <div className="grid w-full h-full max-w-6xl grid-cols-1 grid-rows-4 gap-6 mx-auto md:grid-cols-2 md:grid-rows-2">
+      <div className="grid w-full max-w-6xl grid-cols-1 grid-rows-4 gap-6 mx-auto md:grid-cols-2 md:grid-rows-2">
         {/* Arriba Izquierda: Configuración del juego */}
         <div className="flex flex-row gap-2">
           <ConfiguracionJuego
@@ -334,7 +334,6 @@ const Predict = () => {
             handleInputChange={handleInputChange}
             handleSubmit={handleSubmit}
             handleSaveConfig={handleSaveConfig}
-            crupiers={crupiers}
           />
           <div className="flex-1">
             <EstadisticasJuego contador={contador} />

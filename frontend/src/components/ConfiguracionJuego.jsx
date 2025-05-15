@@ -28,7 +28,6 @@ const ConfiguracionJuego = ({
     handleInputChange,
     handleSubmit,
     handleSaveConfig,
-    crupiers
 }) => {
     const [errores, setErrores] = useState({});
 
@@ -48,18 +47,7 @@ const ConfiguracionJuego = ({
     };
 
     return (
-        <div className="flex flex-col justify-between p-2 md:p-4 rounded-xl shadow-2xl border border-green-700 bg-gradient-to-br from-green-800 to-green-900 min-w-[220px] max-w-[350px] mx-auto h-full">
-            <button
-                className="flex items-center justify-between w-full px-2 py-2 text-base font-bold text-white bg-green-700 shadow rounded-t-xl md:text-lg"
-                onClick={() => setIsOpen(!isOpen)}
-            >
-                <span className="flex items-center gap-2">
-                    <svg className="w-5 h-5 text-white md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
-                    Configuración del juego
-                </span>
-                {/* Flecha visible solo en mobile */}
-                <span className={`md:hidden transform transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}>▼</span>
-            </button>
+        <>
             <Modal isOpen={isModalOpen} onClose={null}>
                 <form onSubmit={handleSubmit} className="p-2 text-sm bg-white border border-gray-200 rounded-lg shadow-xl md:p-4 md:text-base">
                     <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-4">
@@ -119,24 +107,27 @@ const ConfiguracionJuego = ({
                 </form>
             </Modal>
             {/* Config siempre visible en desktop, acordeón en mobile */}
-            <div className={`transition-all duration-300 ease-in-out overflow-hidden md:max-h-full md:opacity-100 md:overflow-visible ${isOpen ? "max-h-[140px] opacity-100" : "max-h-0 opacity-0"}`}>
-                <div className="flex flex-col gap-1 p-2 border-t border-green-700 bg-gradient-to-br from-green-800 to-green-900 md:p-3 rounded-b-xl">
-                    <div className="flex flex-col items-start justify-center gap-1 text-xs font-bold text-white">
-                        <span className="inline-flex items-center gap-1"><span className="font-bold">Tipo:</span> <span className="bg-green-700 px-2 py-0.5 rounded text-xs">{gameConfig.tipo}</span></span>
-                        <span className="inline-flex items-center gap-1"><span className="font-bold">Ruleta:</span> <span className="bg-blue-700 px-2 py-0.5 rounded text-xs">{gameConfig.nombre_ruleta}</span></span>
-                        <span className="inline-flex items-center gap-1"><span className="font-bold">Vecinos:</span> <span className="bg-pink-700 px-2 py-0.5 rounded text-xs">{gameConfig.cantidad_vecinos}</span></span>
-                        <span className="inline-flex items-center gap-1"><span className="font-bold">Tardanza:</span> <span className="bg-yellow-700 px-2 py-0.5 rounded text-xs">{gameConfig.tardanza}</span></span>
-                        <span className="inline-flex items-center gap-1"><span className="font-bold">Umbral:</span> <span className="bg-indigo-700 px-2 py-0.5 rounded text-xs">{gameConfig.umbral_probabilidad}%</span></span>
-                    </div>
-                    <button
-                        className="p-2 mt-2 text-xs font-bold text-white transition-all border border-green-700 rounded shadow bg-gradient-to-r from-green-600 to-green-900 hover:opacity-90 md:text-base"
-                        onClick={() => setIsModalOpen(true)}
-                    >
-                        Reiniciar Juego
-                    </button>
+            <div
+                className={`flex flex-col gap-1 mt-1 p-1 border border-green-700 bg-gradient-to-br to-green-900 md:p-2 rounded-xl max-w-[260px] min-w-[180px]
+                ${isOpen ? 'block' : 'hidden'} md:block`}
+            >
+                <div className="flex flex-col items-start justify-center gap-1 text-xs font-bold text-white">
+
+                    <h3 className="w-full pb-1 mb-1 text-xl font-extrabold tracking-wide text-center text-green-200 uppercase border-b border-green-400">Configuración del Juego</h3>
+
+                    <span className="inline-flex items-center gap-1"><span className="font-bold">Tipo:</span> <span className="bg-green-700 px-2 py-0.5 rounded text-xs">{gameConfig.tipo}</span></span>
+                    <span className="inline-flex items-center gap-1"><span className="font-bold">Ruleta:</span> <span className="bg-blue-700 px-2 py-0.5 rounded text-xs">{gameConfig.nombre_ruleta}</span></span>
+                    <span className="inline-flex items-center gap-1"><span className="font-bold">Vecinos:</span> <span className="bg-pink-700 px-2 py-0.5 rounded text-xs">{gameConfig.cantidad_vecinos}</span></span>
+                    <span className="inline-flex items-center gap-1"><span className="font-bold">Tardanza:</span> <span className="bg-yellow-700 px-2 py-0.5 rounded text-xs">{gameConfig.tardanza}</span></span>
+                    <span className="inline-flex items-center gap-1"><span className="font-bold">Umbral:</span> <span className="bg-indigo-700 px-2 py-0.5 rounded text-xs">{gameConfig.umbral_probabilidad}%</span></span>
                 </div>
+                <button
+                    className="p-2 mt-2 text-xs font-bold text-white transition-all border border-green-700 rounded shadow bg-gradient-to-r from-green-600 to-green-900 hover:opacity-90 md:text-base"
+                    onClick={() => setIsModalOpen(true)}>
+                    Reiniciar Juego
+                </button>
             </div>
-        </div>
+        </>
     );
 };
 

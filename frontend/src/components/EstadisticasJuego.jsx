@@ -2,8 +2,9 @@ import React from "react";
 
 const EstadisticasJuego = ({ contador }) => {
     return (
-        <div className="border border-green-700 shadow-2xl rounded-xl bg-gradient-to-br from-green-800 to-green-900 p-4 m-2">
-            <h3 className="text-lg font-bold text-center text-white mb-2">Estadísticas de Juego</h3>
+        <div className="p-4 m-2 border border-green-700 shadow-2xl rounded-xl bg-gradient-to-br to-green-900">
+            <h3 className="w-full pb-1 mb-1 text-xl font-extrabold tracking-wide text-center text-green-200 uppercase border-b border-green-400">Estadisticas del Juego</h3>
+
             <table className="w-full text-sm text-white">
                 <tbody>
                     <tr>
