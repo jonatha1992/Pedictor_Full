@@ -1,9 +1,12 @@
 
 import React, { useEffect, useState } from "react";
+import { FaBackspace } from 'react-icons/fa';
 
 
 
-const NumerosJugados = ({ numerosSeleccionados, aciertos = [], aciertosVecinos = [] }) => {
+
+// Permite que el prop sea opcional para evitar error si no se pasa
+const NumerosJugados = ({ numerosSeleccionados, aciertos = [], aciertosVecinos = [], onBorrarUltimo = () => { } }) => {
     const [mensajePegado, setMensajePegado] = useState(false);
 
     useEffect(() => {
@@ -18,10 +21,22 @@ const NumerosJugados = ({ numerosSeleccionados, aciertos = [], aciertosVecinos =
             const timer = setTimeout(() => setMensajePegado(false), 2000);
             return () => clearTimeout(timer);
         }
-    }, [numerosSeleccionados]); return (
+    }, [numerosSeleccionados]);
+    return (
         <div className="flex flex-col h-full p-4 rounded">
-            <h3 className="w-full pb-1 mb-1 text-xl font-extrabold tracking-wide text-green-200 uppercase border-b border-green-400 text-center">ÚLTIMOS RESULTADOS</h3>
-            <div className="flex flex-col w-full flex-1">
+            <div className="flex items-center justify-between w-full mb-1">
+                <h3 className="flex-1 pb-1 text-xl font-extrabold tracking-wide text-left text-green-200 uppercase border-b border-green-400">ÚLTIMOS RESULTADOS</h3>
+                <button
+                    className="flex items-center gap-1 px-3 py-1 ml-2 text-sm font-bold text-white transition-colors bg-red-600 border-2 border-red-800 rounded-full shadow focus:outline-none focus:ring-2 focus:ring-yellow-400 hover:bg-yellow-300 hover:text-red-900 hover:border-yellow-500"
+                    title="Borrar el último número"
+                    onClick={onBorrarUltimo}
+                    disabled={numerosSeleccionados.length === 0}
+                >
+                    <FaBackspace className="text-lg" />
+                    <span>Borrar último</span>
+                </button>
+            </div>
+            <div className="flex flex-col flex-1 w-full">
                 <div className="flex flex-row flex-wrap w-full gap-1" style={{ justifyContent: "flex-start", alignItems: "flex-start", paddingLeft: "0" }}>
                     {numerosSeleccionados.slice().reverse().map((numero, index) => {
                         let colorClass = "bg-black";
@@ -45,7 +60,7 @@ const NumerosJugados = ({ numerosSeleccionados, aciertos = [], aciertosVecinos =
                     })}
                 </div>
                 {aciertosVecinos.length > 0 && (
-                    <div className="px-4 py-2 mt-3 font-bold text-blue-900 bg-blue-200 border-2 border-blue-600 rounded shadow animate-bounce self-start">
+                    <div className="self-start px-4 py-2 mt-3 font-bold text-blue-900 bg-blue-200 border-2 border-blue-600 rounded shadow animate-bounce">
                         ¡Se pegó un vecino! Números: {aciertosVecinos.map(v => `${v.numero} (vecino de ${v.vecinoDe})`).join(', ')}
                     </div>
                 )}

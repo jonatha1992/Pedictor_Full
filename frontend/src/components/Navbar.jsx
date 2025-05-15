@@ -41,28 +41,28 @@ const Navbar = () => {
         <ul className="flex items-center space-x-2 md:space-x-4">
           {user && (
             <li>
-              <Link to="/predict" className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow bg-primary hover:bg-highlight">
-                <FaPlay className="text-yellow-300" />
+              <Link to="/predict" className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow group bg-primary hover:bg-highlight">
+                <FaPlay className="text-yellow-300 transition-colors group-hover:text-black" />
                 <span>Jugar</span>
               </Link>
             </li>
           )}
           <li>
-            <Link to="/subscribe" className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow bg-primary hover:bg-highlight">
-              <FaCrown className="text-yellow-300" />
+            <Link to="/subscribe" className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow group bg-primary hover:bg-highlight">
+              <FaCrown className="text-yellow-300 transition-colors group-hover:text-black" />
               <span>Suscripción</span>
             </Link>
           </li>
           <li>
-            <Link to="/contact" className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow bg-primary hover:bg-highlight">
-              <FaEnvelope className="text-yellow-300" />
+            <Link to="/contact" className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow group bg-primary hover:bg-highlight">
+              <FaEnvelope className="text-yellow-300 transition-colors group-hover:text-black" />
               <span>Contacto</span>
             </Link>
           </li>
           {user && (
             <li>
-              <Link to="/config" className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow bg-primary hover:bg-highlight">
-                <FaCog className="text-yellow-300" />
+              <Link to="/config" className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow group bg-primary hover:bg-highlight">
+                <FaCog className="text-yellow-300 transition-colors group-hover:text-black" />
                 <span>Configuración</span>
               </Link>
             </li>
@@ -71,17 +71,17 @@ const Navbar = () => {
             {user ? (
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow-md bg-primary hover:bg-highlight"
+                className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow-md group bg-primary hover:bg-highlight"
               >
-                <FaSignOutAlt className="text-yellow-300" />
+                <FaSignOutAlt className="text-yellow-300 transition-colors group-hover:text-black" />
                 {t("Logout")}
               </button>
             ) : (
               <Link
                 to="/login"
-                className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow-md bg-primary hover:bg-highlight"
+                className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow-md group bg-primary hover:bg-highlight"
               >
-                <FaSignInAlt className="text-yellow-300" />
+                <FaSignInAlt className="text-yellow-300 transition-colors group-hover:text-black" />
                 {t("Login")}
               </Link>
             )}

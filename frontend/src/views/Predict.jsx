@@ -356,7 +356,26 @@ const Predict = () => {
 
         {/* Abajo Derecha: Números jugados */}
         <div className="flex flex-col items-center justify-center border border-green-700 shadow-2xl rounded-xl bg-gradient-to-br from-gray-900 to-green-900">
-          <NumerosJugados numerosSeleccionados={numerosSeleccionados} aciertos={aciertos} aciertosVecinos={aciertosVecinos} />
+          <NumerosJugados
+            numerosSeleccionados={numerosSeleccionados}
+            aciertos={aciertos}
+            aciertosVecinos={aciertosVecinos}
+            onBorrarUltimo={() => {
+              if (numerosSeleccionados.length === 0) return;
+              // Borrar el último número jugado y actualizar todo el estado relacionado
+              setNumerosSeleccionados(prev => prev.slice(0, -1));
+              setNumerosAJugar(prev => prev.filter(n => n.numero !== numerosSeleccionados[numerosSeleccionados.length - 1]));
+              setAciertos(prev => prev.filter(n => n !== numerosSeleccionados[numerosSeleccionados.length - 1]));
+              setAciertosVecinos(prev => prev.filter(v => v.numero !== numerosSeleccionados[numerosSeleccionados.length - 1]));
+              setHistorialPredecidos(prev => prev.filter(h => h.numero !== numerosSeleccionados[numerosSeleccionados.length - 1]));
+              setContador(prev => ({
+                ...prev,
+                ingresados: Math.max(0, prev.ingresados - 1),
+                jugados: Math.max(0, prev.jugados - 1),
+                // Opcional: puedes ajustar aciertos/aciertos_vecinos si lo deseas
+              }));
+            }}
+          />
         </div>
       </div>
     </div >
