@@ -18,13 +18,11 @@ const NumerosJugados = ({ numerosSeleccionados, aciertos = [], aciertosVecinos =
             const timer = setTimeout(() => setMensajePegado(false), 2000);
             return () => clearTimeout(timer);
         }
-    }, [numerosSeleccionados]);
-
-    return (
-        <div className="flex flex-col items-center justify-center p-4 rounded">
-            <div className="flex flex-col items-center w-full">
-                <h3 className="w-full pb-1 mb-1 text-xl font-extrabold tracking-wide text-center text-green-200 uppercase border-b border-green-400">Últimos resultados</h3>
-                <div className="flex flex-row flex-wrap items-center justify-center w-full gap-1">
+    }, [numerosSeleccionados]); return (
+        <div className="flex flex-col h-full p-4 rounded">
+            <h3 className="w-full pb-1 mb-1 text-xl font-extrabold tracking-wide text-green-200 uppercase border-b border-green-400 text-center">ÚLTIMOS RESULTADOS</h3>
+            <div className="flex flex-col w-full flex-1">
+                <div className="flex flex-row flex-wrap w-full gap-1" style={{ justifyContent: "flex-start", alignItems: "flex-start", paddingLeft: "0" }}>
                     {numerosSeleccionados.slice().reverse().map((numero, index) => {
                         let colorClass = "bg-black";
                         if (numero === 0) colorClass = "bg-green-500";
@@ -47,7 +45,7 @@ const NumerosJugados = ({ numerosSeleccionados, aciertos = [], aciertosVecinos =
                     })}
                 </div>
                 {aciertosVecinos.length > 0 && (
-                    <div className="px-4 py-2 mt-3 font-bold text-blue-900 bg-blue-200 border-2 border-blue-600 rounded shadow animate-bounce">
+                    <div className="px-4 py-2 mt-3 font-bold text-blue-900 bg-blue-200 border-2 border-blue-600 rounded shadow animate-bounce self-start">
                         ¡Se pegó un vecino! Números: {aciertosVecinos.map(v => `${v.numero} (vecino de ${v.vecinoDe})`).join(', ')}
                     </div>
                 )}

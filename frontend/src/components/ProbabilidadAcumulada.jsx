@@ -23,46 +23,48 @@ const ProbabilidadTabla = ({ historial, maxRepeticiones }) => {
 
     return (
         <div className="flex items-start justify-center w-full">
-            <div className="flex flex-col w-full p-0 md:p-2">
-                <table className="w-full min-w-[180px] rounded shadow text-sm bg-white border border-gray-200 ">
-                    <thead className="bg-gray-100 border-b border-gray-300">
-                        <tr className="text-center">
-                            <th className="px-2 py-1 font-semibold text-gray-700">Numero</th>
-                            <th className="px-2 py-1 font-semibold text-gray-700">Probabilidad</th>
-                            <th className="px-2 py-1 font-semibold text-gray-700">Tardanza</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filtrados.map((item, idx) => {
-                            let porcentaje = typeof item.probabilidadAcumulada !== 'undefined' ? item.probabilidadAcumulada : item.probabilidad;
-                            porcentaje = Math.round(porcentaje);
-                            let tardanza = null;
-                            if (typeof item.tardancia !== 'undefined') tardanza = item.tardancia;
-                            else if (typeof item.tardanza !== 'undefined') tardanza = item.tardanza;
-                            else if (typeof item.repeticiones !== 'undefined') tardanza = item.repeticiones;
-                            else tardanza = '-';
-                            const superaUmbral = porcentaje >= umbral;
-                            return (
-                                <tr
-                                    key={item.numero + '-' + idx}
-                                    className={`text-center transition-colors ${idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'} ${superaUmbral ? 'bg-green-100 font-bold border-l-4 border-green-500' : ''}`}
-                                    style={{ height: '38px' }}
-                                >
-                                    <td className="px-2 py-1">
-                                        <span
-                                            className={`h-7 w-7 rounded-full text-white flex items-center justify-center border-2 border-white text-base font-extrabold mx-auto ${getColorClass(item.numero)}`}
+            <div className="relative flex flex-col w-full px-2">
+                <div className="max-h-[220px] overflow-auto scrollbar-thin scrollbar-thumb-green-700 scrollbar-track-gray-200">
+                    <table className="w-full min-w-[180px] rounded-lg shadow-md text-xs md:text-sm border border-green-700 bg-gradient-to-b from-gray-900 to-green-900">
+                        <thead className="sticky top-0 z-10 border-b border-green-600 bg-gradient-to-r from-green-900 to-green-800">
+                            <tr className="text-center">
+                                <th className="px-2 py-2 font-bold text-green-200">Numero</th>
+                                <th className="px-2 py-2 font-bold text-green-200">Probabilidad</th>
+                                <th className="px-2 py-2 font-bold text-green-200">Tardanza</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filtrados.map((item, idx) => {
+                                let porcentaje = typeof item.probabilidadAcumulada !== 'undefined' ? item.probabilidadAcumulada : item.probabilidad;
+                                porcentaje = Math.round(porcentaje);
+                                let tardanza = null;
+                                if (typeof item.tardancia !== 'undefined') tardanza = item.tardancia;
+                                else if (typeof item.tardanza !== 'undefined') tardanza = item.tardanza;
+                                else if (typeof item.repeticiones !== 'undefined') tardanza = item.repeticiones;
+                                else tardanza = '-';
+                                const superaUmbral = porcentaje >= umbral;
+                                return (
+                                    <tr
+                                        key={item.numero + '-' + idx}
+                                        className={`text-center transition-colors ${idx % 2 === 0 ? 'bg-opacity-20 bg-green-900' : 'bg-opacity-10 bg-green-800'} ${superaUmbral ? 'font-bold border-l-2 border-green-500' : ''} hover:bg-green-700 hover:bg-opacity-25`}
+                                        style={{ height: '28px' }}
+                                    >
+                                        <td className="px-2">
+                                            <span
+                                                className={` h-6 w-6 rounded-full text-white flex items-center justify-center border-2 border-white  text-xs  mx-auto ${getColorClass(item.numero)}`}
 
-                                        >
-                                            {item.numero}
-                                        </span>
-                                    </td>
-                                    <td className="px-2 py-1 text-base text-gray-800">{porcentaje}%</td>
-                                    <td className="px-2 py-1 text-base text-gray-800">{tardanza}</td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
+                                            >
+                                                {item.numero}
+                                            </span>
+                                        </td>
+                                        <td className="px-1 text-xs font-medium text-green-200 md:text-sm">{porcentaje}%</td>
+                                        <td className="px-1 text-xs font-medium text-green-200 md:text-sm">{tardanza}</td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );

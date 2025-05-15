@@ -2,6 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
+// Importar íconos necesarios
+import { FaPlay, FaCrown, FaEnvelope, FaCog, FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
 
 const Navbar = () => {
   const { t, i18n } = useTranslation();
@@ -39,33 +41,47 @@ const Navbar = () => {
         <ul className="flex items-center space-x-2 md:space-x-4">
           {user && (
             <li>
-              <Link to="/predict" className="px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow bg-primary hover:bg-highlight">Jugar</Link>
+              <Link to="/predict" className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow bg-primary hover:bg-highlight">
+                <FaPlay className="text-yellow-300" />
+                <span>Jugar</span>
+              </Link>
             </li>
           )}
           <li>
-            <Link to="/subscribe" className="px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow bg-primary hover:bg-highlight">Suscripción</Link>
+            <Link to="/subscribe" className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow bg-primary hover:bg-highlight">
+              <FaCrown className="text-yellow-300" />
+              <span>Suscripción</span>
+            </Link>
           </li>
           <li>
-            <Link to="/contact" className="px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow bg-primary hover:bg-highlight">Contacto</Link>
+            <Link to="/contact" className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow bg-primary hover:bg-highlight">
+              <FaEnvelope className="text-yellow-300" />
+              <span>Contacto</span>
+            </Link>
           </li>
           {user && (
             <li>
-              <Link to="/config" className="px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow bg-primary hover:bg-highlight">Configuración</Link>
+              <Link to="/config" className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow bg-primary hover:bg-highlight">
+                <FaCog className="text-yellow-300" />
+                <span>Configuración</span>
+              </Link>
             </li>
           )}
           <li>
             {user ? (
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow-md bg-primary hover:bg-highlight"
+                className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow-md bg-primary hover:bg-highlight"
               >
+                <FaSignOutAlt className="text-yellow-300" />
                 {t("Logout")}
               </button>
             ) : (
               <Link
                 to="/login"
-                className="px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow-md bg-primary hover:bg-highlight"
+                className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-colors border border-green-700 rounded-full shadow-md bg-primary hover:bg-highlight"
               >
+                <FaSignInAlt className="text-yellow-300" />
                 {t("Login")}
               </Link>
             )}
