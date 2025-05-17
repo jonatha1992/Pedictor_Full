@@ -11,6 +11,25 @@ import { vecino1lugar, vecino2lugar, vecinos3lugar, Vecino4lugar } from "../conf
 import crupiers from "../assets/crupiers.webp";
 
 const Predict = () => {
+  // Función para reinicio total (se usará desde ConfiguracionJuego)
+  useEffect(() => {
+    window.reiniciarJuegoTotal = () => {
+      setNumerosSeleccionados([]);
+      setHistorialPredecidos([]);
+      setNumerosAJugar([]);
+      setAciertos([]);
+      setAciertosVecinos([]);
+      setContador({
+        ingresados: 0,
+        jugados: 0,
+        aciertos_totales: 0,
+        aciertos_vecinos: 0,
+        Sin_salir_nada: 0,
+        efectividad: "0"
+      });
+    };
+    return () => { delete window.reiniciarJuegoTotal; };
+  }, []);
   const numbers = Array.from({ length: 37 }, (_, i) => i); // Array de 0 a 36
   const [notificaciones, setNotificaciones] = useState([]);
   const [numerosSeleccionados, setNumerosSeleccionados] = useState([]);
@@ -39,7 +58,8 @@ const Predict = () => {
   });
 
   // Redirigir a configuración si no está configurado antes de jugar
-  const isConfigReady = gameConfig.tipo && gameConfig.nombre_ruleta && gameConfig.tardanza > 0 && gameConfig.cantidad_vecinos > 0 && gameConfig.umbral_probabilidad > 0;
+  // Permitir cantidad_vecinos igual a 0 (sin vecinos)
+  const isConfigReady = gameConfig.tipo && gameConfig.nombre_ruleta && gameConfig.tardanza > 0 && gameConfig.cantidad_vecinos >= 0 && gameConfig.umbral_probabilidad > 0;
   const [showConfigWarning, setShowConfigWarning] = useState(false);
 
 
@@ -163,10 +183,10 @@ const Predict = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setGameConfig({
-      ...gameConfig,
-      [name]: value,
-    });
+    setGameConfig(prev => ({
+      ...prev,
+      [name]: ["tardanza", "cantidad_vecinos", "umbral_probabilidad"].includes(name) ? Number(value) : value,
+    }));
     // Guardar el umbral en localStorage para que Probabilidades.jsx lo use
     if (name === 'umbral_probabilidad') {
       localStorage.setItem('umbral_probabilidad', value);

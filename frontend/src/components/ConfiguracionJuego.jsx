@@ -46,6 +46,16 @@ const ConfiguracionJuego = ({
         validar(e.target.name, e.target.value);
     };
 
+    // Nueva función para reinicio total
+    const handleReiniciarTotal = () => {
+        if (window.confirm("¿Estás seguro que quieres reiniciar el juego? Se borrarán todos los números y estadísticas.")) {
+            if (typeof window.reiniciarJuegoTotal === 'function') {
+                window.reiniciarJuegoTotal();
+            }
+            if (typeof setIsModalOpen === 'function') setIsModalOpen(false);
+        }
+    };
+
     return (
         <>
             <Modal isOpen={isModalOpen} onClose={null}>
@@ -103,6 +113,10 @@ const ConfiguracionJuego = ({
                     <button onClick={handleSaveConfig} type="submit" className="flex items-center justify-center w-full gap-2 py-2 mt-4 text-sm font-semibold text-white transition rounded shadow-lg bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 md:text-base">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></svg>
                         Guardar Configuración
+                    </button>
+                    <button type="button" onClick={handleReiniciarTotal} className="flex items-center justify-center w-full gap-2 py-2 mt-2 text-sm font-semibold text-white transition rounded shadow-lg bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 md:text-base">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" /></svg>
+                        Reiniciar Juego (Total)
                     </button>
                 </form>
             </Modal>
