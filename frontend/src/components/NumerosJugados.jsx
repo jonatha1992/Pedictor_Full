@@ -59,11 +59,7 @@ const NumerosJugados = ({ numerosSeleccionados, aciertos = [], aciertosVecinos =
                         );
                     })}
                 </div>
-                {aciertosVecinos.length > 0 && (
-                    <div className="self-start px-4 py-2 mt-3 font-bold text-blue-900 bg-blue-200 border-2 border-blue-600 rounded shadow animate-bounce">
-                        ¡Se pegó un vecino! Números: {aciertosVecinos.map(v => `${v.numero} (vecino de ${v.vecinoDe})`).join(', ')}
-                    </div>
-                )}
+
             </div>
         </div>
     );

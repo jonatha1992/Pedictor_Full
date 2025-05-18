@@ -72,19 +72,27 @@ const ProbabilidadTabla = ({ historial, maxRepeticiones }) => {
 
 
 
-const ProbabilidadAcumulada = ({ historial, maxRepeticiones }) => (
-    <div className="flex flex-col items-start justify-center w-full gap-1 pt-1 text-center bg-center bg-cover md:flex-row md:pt-2 max-h-[320px] min-h-[220px]">
-        {/* Tabla de probabilidad */}
-        <div className="flex flex-col items-stretch flex-1 ">
-            <h3 className="w-full pb-1 mb-1 text-lg font-extrabold tracking-wide text-center text-green-200 uppercase border-b border-green-400">Números a Jugar</h3>
-            <ProbabilidadTabla historial={historial} maxRepeticiones={maxRepeticiones} />
+
+const ProbabilidadAcumulada = ({ historial, maxRepeticiones, soloRuleta }) => {
+    if (soloRuleta) {
+        return (
+            <div className="flex flex-col items-center justify-center w-full h-full min-h-[180px]">
+                <div className="flex flex-col items-center justify-center min-w-[120px] max-w-[220px]">
+                    <img src={ruletaImg} alt="Ruleta" height={250} className="max-w-[220px] md:max-w-[180px] w-full border-green-700 shadow-lg" />
+                    <span className="mt-2 text-xs text-green-200">Ruleta y vecinos</span>
+                </div>
+            </div>
+        );
+    }
+    return (
+        <div className="flex flex-col md:flex-row w-full gap-1 pt-1 text-center bg-center bg-cover max-h-[320px] min-h-[220px]">
+            {/* Tabla de probabilidad */}
+            <div className="flex flex-col items-center justify-start w-full">
+                <h3 className="w-full pb-1 mb-1 text-lg font-extrabold tracking-wide text-center text-green-200 uppercase border-b border-green-400">Números a Jugar</h3>
+                <ProbabilidadTabla historial={historial} maxRepeticiones={maxRepeticiones} />
+            </div>
         </div>
-        {/* Imagen de la ruleta */}
-        <div className="flex flex-col items-start justify-start flex-1 min-w-[120px] max-w-[220px] ">
-            <img src={ruletaImg} alt="Ruleta" height={250} className="max-w-[110px] md:max-w-[180px] w-full border-green-700 shadow-lg" />
-            <span className="mt-2 text-xs text-green-200">Visualización de la ruleta y vecinos</span>
-        </div>
-    </div>
-);
+    );
+};
 
 export default ProbabilidadAcumulada;

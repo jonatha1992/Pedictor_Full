@@ -9,7 +9,7 @@ const Notificaciones = ({ notificaciones }) => {
     if (notificaciones.length > 0) {
       const nuevaNotificacion = notificaciones[notificaciones.length - 1];
       setNotificacionesActivas(prev => [...prev, nuevaNotificacion]);
-      
+
       setTimeout(() => {
         setNotificacionesActivas(prev => prev.filter(n => n !== nuevaNotificacion));
         setHistorial(prev => [...prev, nuevaNotificacion]);
@@ -33,7 +33,7 @@ const Notificaciones = ({ notificaciones }) => {
           </div>
         ))}
       </div>
-      
+
       {/* Historial de notificaciones */}
       <div ref={historialRef} className="bg-transparent p-2 rounded shadow-lg overflow-y-auto flex-grow">
         <ul className="space-y-1">

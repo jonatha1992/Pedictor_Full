@@ -122,8 +122,8 @@ const ConfiguracionJuego = ({
             </Modal>
             {/* Config siempre visible en desktop, acordeón en mobile */}
             <div
-                className={`flex flex-col gap-1 mt-1 p-2 border border-green-700 bg-gradient-to-br to-green-900 md:p-2 rounded-xl max-w-[220px] min-w-[170px] h-full md:h-full flex-1
-                ${isOpen ? 'flex' : 'hidden'} md:flex`}
+                className={`flex flex-col gap-1 mt-1 p-2 border border-green-700 bg-gradient-to-br to-green-900 md:p-2 rounded-xl w-full max-w-xs h-full md:h-full flex-1 mx-auto
+                ${(isOpen || window.innerWidth >= 768) ? 'flex' : 'hidden'} md:flex`}
             >
                 <h3 className="w-full pb-1 mb-1 text-lg font-extrabold tracking-wide text-center text-green-200 uppercase border-b border-green-400">Configuración Juego</h3>
                 <div className="flex flex-col gap-0.5 w-full flex-1 justify-center text-[13px] font-semibold text-white">
@@ -134,7 +134,7 @@ const ConfiguracionJuego = ({
                     <div className="flex items-center justify-between w-full"><span className="text-green-200">Umbral:</span> <span className="bg-indigo-700 px-2 py-0.5 rounded text-xs ml-2">{gameConfig.umbral_probabilidad}%</span></div>
                 </div>
                 <button
-                    className="self-end w-full p-1 text-xs font-bold text-white transition-all border border-green-700 rounded shadow bg-gradient-to-r from-green-600 to-green-900 hover:opacity-90"
+                    className="w-full p-1 text-xs font-bold text-white transition-all border border-green-700 rounded shadow bg-gradient-to-r from-green-600 to-green-900 hover:opacity-90"
                     style={{ marginTop: "auto" }}
                     onClick={() => setIsModalOpen(true)}>
                     Reiniciar Juego

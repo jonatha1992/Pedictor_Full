@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from "react";
 import backgroundImage1 from "../assets/tablero1.jpg";
 import axios from 'axios';
@@ -9,6 +8,7 @@ import TableroRuleta from "../components/TableroRuleta";
 import NumerosJugados from "../components/NumerosJugados";
 import { vecino1lugar, vecino2lugar, vecinos3lugar, Vecino4lugar } from "../config/vecinos";
 import crupiers from "../assets/crupiers.webp";
+import Notificacion from "../components/Notificacion";
 
 const Predict = () => {
   // Función para reinicio total (se usará desde ConfiguracionJuego)
@@ -56,6 +56,19 @@ const Predict = () => {
     umbral_probabilidad: 50,
     user: 2
   });
+
+  // Estado para la alerta central
+  const [alertaInfo, setAlertaInfo] = useState({
+    mensaje: '',
+    visible: false,
+    saliendo: false
+  });
+
+  // Cola de notificaciones pendientes
+  const [notificacionesPendientes, setNotificacionesPendientes] = useState([]);
+
+  // Flag para controlar si hay una notificación en curso
+  const [notificacionEnCurso, setNotificacionEnCurso] = useState(false);
 
   // Redirigir a configuración si no está configurado antes de jugar
   // Permitir cantidad_vecinos igual a 0 (sin vecinos)
@@ -235,10 +248,44 @@ const Predict = () => {
   useEffect(() => { }, []);
 
   const agregarNotificacion = (mensaje) => {
+    // Agregar mensaje a notificaciones generales
     setNotificaciones((prev) => [...prev, mensaje]);
+
+    // Para mensajes de acierto y vecinos, encolar para la alerta central
+    if (mensaje.includes("¡Acierto!") || mensaje.includes("¡Se pegó")) {
+      setNotificacionesPendientes(prev => [...prev, mensaje]);
+    }
+  };
+  // Función para mostrar una alerta central animada con Tailwind
+  const mostrarAlertaCentral = (mensaje) => {
+    // Marcar que hay una notificación en curso
+    setNotificacionEnCurso(true);
+
+    // Establecer los datos de la alerta
+    setAlertaInfo({ mensaje, visible: true, saliendo: false });
+
+    // Animar salida tras 3 segundos
+    setTimeout(() => {
+      setAlertaInfo(prev => ({ ...prev, saliendo: true }));
+
+      // Después de la animación, restablecer el estado
+      setTimeout(() => {
+        setAlertaInfo({ mensaje: '', visible: false, saliendo: false });
+        // Marcar que ya no hay notificación en curso
+        setNotificacionEnCurso(false);
+      }, 500);
+    }, 3000);
   };
 
-
+  // Efecto para procesar la cola de notificaciones
+  useEffect(() => {
+    // Si hay notificaciones pendientes y no hay una en curso, mostrar la siguiente
+    if (notificacionesPendientes.length > 0 && !notificacionEnCurso) {
+      const mensaje = notificacionesPendientes[0];
+      setNotificacionesPendientes(prev => prev.slice(1));
+      mostrarAlertaCentral(mensaje);
+    }
+  }, [notificacionesPendientes, notificacionEnCurso]);
 
   // Utilidad para obtener vecinos según la config
   const getVecinos = (numero, cantidadVecinos) => {
@@ -335,47 +382,103 @@ const Predict = () => {
     });
   };
 
+  // Estado para alternar entre configuración y estadísticas en mobile
+  const [mobileView, setMobileView] = useState("estadisticas"); // "estadisticas" o "configuracion"
+  // Estado para alternar entre números a jugar y vecinos en mobile
+  const [mobileProbView, setMobileProbView] = useState("numeros"); // "numeros" o "vecinos"
   return (
-    <div className="min-h-screen px-2 py-8 bg-gradient-to-br from-gray-900 via-green-900 to-black md:px-8">
+    <div className="min-h-screen px-1 py-4 bg-gradient-to-br from-gray-900 via-green-900 to-black md:px-4">
+      {/* Usando el componente de notificación Tailwind */}
+      <Notificacion
+        mensaje={alertaInfo.mensaje}
+        visible={alertaInfo.visible}
+        saliendo={alertaInfo.saliendo}
+      />
+
       {showConfigWarning && (
-        <div className="p-4 mb-4 font-bold text-center text-white bg-red-600 border-2 border-red-300 rounded-lg shadow-lg animate-pulse">
+        <div className="p-2 mb-2 text-xs font-bold text-center text-white bg-red-600 border-2 border-red-300 rounded-lg shadow-lg animate-pulse md:text-base">
           Debes elegir los parámetros de juego antes de comenzar a jugar.
         </div>
       )}
-      <div className="grid w-full max-w-6xl grid-cols-1 grid-rows-4 gap-6 mx-auto md:grid-cols-2 md:grid-rows-2">
-        {/* Arriba Izquierda: Configuración del juego */}
-        <div className="flex flex-row gap-2">
-          <ConfiguracionJuego
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            isModalOpen={isModalOpen}
-            setIsModalOpen={setIsModalOpen}
-            gameConfig={gameConfig}
-            handleInputChange={handleInputChange}
-            handleSubmit={handleSubmit}
-            handleSaveConfig={handleSaveConfig}
-          />
-          <div className="flex-1">
+      <div className="grid w-full max-w-6xl grid-cols-1 gap-3 mx-auto md:grid-cols-2 md:gap-6">
+        {/* Arriba Izquierda: Configuración del juego y Estadísticas (mobile: alternar, tablet+: lado a lado) */}
+        <div className="flex flex-col w-full gap-2 md:flex-row">
+          {/* Botones de alternancia solo en mobile */}
+          <div className="flex gap-2 mb-2 md:hidden">
+            <button
+              className={`flex-1 py-2 rounded font-bold text-xs ${mobileView === 'estadisticas' ? 'bg-green-700 text-white' : 'bg-gray-800 text-green-200'}`}
+              onClick={() => {
+                setMobileView('estadisticas');
+                setIsOpen(false);
+              }}
+            >
+              Estadísticas
+            </button>
+            <button
+              className={`flex-1 py-2 rounded font-bold text-xs ${mobileView === 'configuracion' ? 'bg-green-700 text-white' : 'bg-gray-800 text-green-200'}`}
+              onClick={() => {
+                setMobileView('configuracion');
+                setIsOpen(true);
+              }}
+            >
+              Configuración
+            </button>
+          </div>
+          {/* Estadísticas y Configuración: ambos visibles en tablet+ (md), alternancia en mobile */}
+          <div className={`w-full md:w-1/2 ${mobileView !== 'estadisticas' ? 'hidden' : ''} md:block`}>
             <EstadisticasJuego contador={contador} />
+          </div>
+          <div className={`w-full md:w-1/2 ${mobileView !== 'configuracion' ? 'hidden' : ''} md:block`}>
+            <ConfiguracionJuego
+              isOpen={isOpen || window.innerWidth >= 768}
+              setIsOpen={setIsOpen}
+              isModalOpen={isModalOpen}
+              setIsModalOpen={setIsModalOpen}
+              gameConfig={gameConfig}
+              handleInputChange={handleInputChange}
+              handleSubmit={handleSubmit}
+              handleSaveConfig={handleSaveConfig}
+            />
           </div>
         </div>
 
-        {/* Arriba Derecha: Probabilidad acumulada por tirada */}
-        <div className="flex flex-col border border-green-700 shadow-2xl rounded-xl bg-gradient-to-br from-gray-800 to-green-800">
-          <ProbabilidadAcumulada
-            historial={numerosAJugar}
-            backgroundImage1={backgroundImage1}
-            maxRepeticiones={gameConfig.cantidad_vecinos}
-          />
+        {/* Arriba Derecha: Probabilidad acumulada por tirada y foto (mobile: alternar, tablet+: lado a lado) */}
+        <div className="flex flex-col md:flex-row border border-green-700 shadow-2xl rounded-xl bg-gradient-to-br from-gray-800 to-green-800 min-h-[180px] md:min-h-[220px] p-2 md:p-4 overflow-x-auto w-full">
+          {/* Botones de alternancia solo en mobile */}
+          <div className="flex gap-2 mb-2 md:hidden">
+            <button
+              className={`flex-1 py-2 rounded font-bold text-xs ${mobileProbView === 'numeros' ? 'bg-green-700 text-white' : 'bg-gray-800 text-green-200'}`}
+              onClick={() => setMobileProbView('numeros')}
+            >
+              Números a Jugar
+            </button>
+            <button
+              className={`flex-1 py-2 rounded font-bold text-xs ${mobileProbView === 'vecinos' ? 'bg-green-700 text-white' : 'bg-gray-800 text-green-200'}`}
+              onClick={() => setMobileProbView('vecinos')}
+            >
+              Ver Vecinos
+            </button>
+          </div>
+          {/* Números a jugar (mobile: solo si seleccionado, tablet+: siempre) */}
+          <div className={`w-full md:w-2/3 ${mobileProbView !== 'numeros' ? 'hidden' : ''} md:block`}>
+            <ProbabilidadAcumulada
+              historial={numerosAJugar}
+              maxRepeticiones={gameConfig.cantidad_vecinos}
+            />
+          </div>
+          {/* Foto de la ruleta (mobile: solo si seleccionado, tablet+: siempre al costado) */}
+          <div className={`w-full md:w-1/3 flex items-center justify-center ${mobileProbView !== 'vecinos' ? 'hidden' : ''} md:block`}>
+            <ProbabilidadAcumulada soloRuleta={true} />
+          </div>
         </div>
 
         {/* Abajo Izquierda: Tablero de ruleta */}
-        <div className="flex flex-col items-center justify-center border border-green-700 shadow-2xl rounded-xl bg-gradient-to-br from-gray-900 to-green-900">
+        <div className="flex flex-col items-center justify-center border border-green-700 shadow-2xl rounded-xl bg-gradient-to-br from-gray-900 to-green-900 p-2 md:p-4 min-h-[220px] overflow-x-auto w-full">
           <TableroRuleta handleNumeroClick={isConfigReady ? handleNumeroClick : () => setShowConfigWarning(true)} />
         </div>
 
         {/* Abajo Derecha: Números jugados */}
-        <div className="flex flex-col items-center justify-center border border-green-700 shadow-2xl rounded-xl bg-gradient-to-br from-gray-900 to-green-900">
+        <div className="flex flex-col items-center justify-center border border-green-700 shadow-2xl rounded-xl bg-gradient-to-br from-gray-900 to-green-900 p-2 md:p-4 min-h-[180px] overflow-x-auto w-full">
           <NumerosJugados
             numerosSeleccionados={numerosSeleccionados}
             aciertos={aciertos}
@@ -397,8 +500,8 @@ const Predict = () => {
             }}
           />
         </div>
-      </div>
-    </div >
+      </div>      {/* Eliminamos este componente para evitar duplicación */}
+    </div>
   );
 
 
