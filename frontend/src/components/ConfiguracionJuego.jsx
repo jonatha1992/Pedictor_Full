@@ -29,15 +29,22 @@ const ConfiguracionJuego = ({
     handleSubmit,
     handleSaveConfig,
 }) => {
-    const [errores, setErrores] = useState({});
-
-    // Validación simple
+    const [errores, setErrores] = useState({});    // Validación simple
     const validar = (name, value) => {
         let error = "";
         if (name === "nombre_ruleta" && !value) error = "El nombre es obligatorio";
-        if (name === "tardanza" && (value < 1 || value > 20)) error = "Debe ser entre 1 y 20";
-        if (name === "cantidad_vecinos" && (value < 0 || value > 4)) error = "Debe ser entre 0 y 4";
-        if (name === "umbral_probabilidad" && (value < 0 || value > 100)) error = "Debe ser entre 0 y 100";
+        if (name === "tardanza" && value !== "") {
+            const numValue = Number(value);
+            if (numValue < 1 || numValue > 20) error = "Debe ser entre 1 y 20";
+        }
+        if (name === "cantidad_vecinos" && value !== "") {
+            const numValue = Number(value);
+            if (numValue < 0 || numValue > 4) error = "Debe ser entre 0 y 4";
+        }
+        if (name === "umbral_probabilidad" && value !== "") {
+            const numValue = Number(value);
+            if (numValue < 1 || numValue > 100) error = "Debe ser entre 1 y 100";
+        }
         setErrores(prev => ({ ...prev, [name]: error }));
     };
 
@@ -90,7 +97,7 @@ const ConfiguracionJuego = ({
                                 {iconos.tardanza} Tardanza (jugadas)
                                 <span className="text-gray-400 cursor-pointer" title="Si un número no sale en este número de jugadas, su probabilidad se reinicia.">?</span>
                             </label>
-                            <input type="number" name="tardanza" value={gameConfig.tardanza} onChange={onInputChange} className={`block w-full p-2 mt-1 transition border ${errores.tardanza ? "border-red-500" : "border-gray-300"} rounded focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400`} required />
+                            <input type="number" name="tardanza" min="1" max="20" step="1" value={gameConfig.tardanza} placeholder="5" onChange={onInputChange} className={`block w-full p-2 mt-1 transition border ${errores.tardanza ? "border-red-500" : "border-gray-300"} rounded focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400`} required />
                             {errores.tardanza && <span className="text-xs text-red-500">{errores.tardanza}</span>}
                         </div>
                         <div>
@@ -98,7 +105,7 @@ const ConfiguracionJuego = ({
                                 {iconos.vecinos} Cantidad de Vecinos
                                 <span className="text-gray-400 cursor-pointer" title="Números laterales considerados en la predicción.">?</span>
                             </label>
-                            <input type="number" name="cantidad_vecinos" value={gameConfig.cantidad_vecinos} onChange={onInputChange} className={`block w-full p-2 mt-1 transition border ${errores.cantidad_vecinos ? "border-red-500" : "border-gray-300"} rounded focus:ring-2 focus:ring-pink-400 focus:border-pink-400`} required />
+                            <input type="number" name="cantidad_vecinos" min="0" max="4" step="1" value={gameConfig.cantidad_vecinos} placeholder="1" onChange={onInputChange} className={`block w-full p-2 mt-1 transition border ${errores.cantidad_vecinos ? "border-red-500" : "border-gray-300"} rounded focus:ring-2 focus:ring-pink-400 focus:border-pink-400`} required />
                             {errores.cantidad_vecinos && <span className="text-xs text-red-500">{errores.cantidad_vecinos}</span>}
                         </div>
                         <div className="md:col-span-2">
@@ -106,7 +113,7 @@ const ConfiguracionJuego = ({
                                 {iconos.umbral} Umbral de Probabilidad (%)
                                 <span className="text-gray-400 cursor-pointer" title="Probabilidad mínima (entera, sin decimales) para sugerir un número. Ejemplo: 50">?</span>
                             </label>
-                            <input type="number" name="umbral_probabilidad" value={gameConfig.umbral_probabilidad} onChange={onInputChange} min="0" max="100" step="1" className={`block w-full p-2 mt-1 transition border ${errores.umbral_probabilidad ? "border-red-500" : "border-gray-300"} rounded focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400`} required />
+                            <input type="number" name="umbral_probabilidad" value={gameConfig.umbral_probabilidad} placeholder="50" onChange={onInputChange} min="1" max="100" step="1" className={`block w-full p-2 mt-1 transition border ${errores.umbral_probabilidad ? "border-red-500" : "border-gray-300"} rounded focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400`} required />
                             {errores.umbral_probabilidad && <span className="text-xs text-red-500">{errores.umbral_probabilidad}</span>}
                         </div>
                     </div>

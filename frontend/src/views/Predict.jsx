@@ -47,14 +47,13 @@ const Predict = () => {
   const [aciertos, setAciertos] = useState([]);
   const [aciertosVecinos, setAciertosVecinos] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [gameConfig, setGameConfig] = useState({
-    tipo: "Electromecanica",
-    nombre_ruleta: "Roling money",
-    tardanza: 5,
-    cantidad_vecinos: 1,
-    umbral_probabilidad: 50,
-    user: 2
+  const [isModalOpen, setIsModalOpen] = useState(false); const [gameConfig, setGameConfig] = useState({
+    tipo: "",
+    nombre_ruleta: "",
+    tardanza: "",
+    cantidad_vecinos: "",
+    umbral_probabilidad: "",
+    user: ""
   });
 
   // Estado para la alerta central
@@ -69,10 +68,13 @@ const Predict = () => {
 
   // Flag para controlar si hay una notificación en curso
   const [notificacionEnCurso, setNotificacionEnCurso] = useState(false);
-
   // Redirigir a configuración si no está configurado antes de jugar
   // Permitir cantidad_vecinos igual a 0 (sin vecinos)
-  const isConfigReady = gameConfig.tipo && gameConfig.nombre_ruleta && gameConfig.tardanza > 0 && gameConfig.cantidad_vecinos >= 0 && gameConfig.umbral_probabilidad > 0;
+  const isConfigReady = gameConfig.tipo &&
+    gameConfig.nombre_ruleta &&
+    Number(gameConfig.tardanza) > 0 &&
+    Number(gameConfig.cantidad_vecinos) >= 0 &&
+    Number(gameConfig.umbral_probabilidad) > 0;
   const [showConfigWarning, setShowConfigWarning] = useState(false);
 
 
@@ -135,6 +137,9 @@ const Predict = () => {
     let nuevoHistorial = [...historialPredecidos];
     let nuevosAJugar = [...numerosAJugar];
 
+    // Contador de nuevos números agregados a jugar para actualizar estadísticas
+    let nuevosNumerosAgregados = 0;
+
     predicciones.forEach(pred => {
       let probabilidad = pred.probabilidad;
       if (typeof probabilidad === 'string') probabilidad = parseFloat(probabilidad);
@@ -173,6 +178,8 @@ const Predict = () => {
             tardancia: 0,
             repetido: false
           });
+          // Incrementar contador de nuevos números agregados
+          nuevosNumerosAgregados++;
         }
         return false;
       }
@@ -184,6 +191,15 @@ const Predict = () => {
 
     setHistorialPredecidos(nuevoHistorial);
     setNumerosAJugar(nuevosAJugar);
+
+    // Actualizar el contador con los nuevos números a jugar
+    if (nuevosNumerosAgregados > 0) {
+      setContador(prev => ({
+        ...prev,
+        jugados: prev.jugados + nuevosNumerosAgregados
+      }));
+    }
+
     // Consola: Probabilidad acumulada en memoria (historial y numerosAJugar)
     const acumulada = {
       historial: nuevoHistorial,
@@ -193,15 +209,17 @@ const Predict = () => {
     // Consola: Números a jugar finales
     console.log("[Números a jugar FINAL]", nuevosAJugar);
   };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    const numericFields = ["tardanza", "cantidad_vecinos", "umbral_probabilidad"];
+
     setGameConfig(prev => ({
       ...prev,
-      [name]: ["tardanza", "cantidad_vecinos", "umbral_probabilidad"].includes(name) ? Number(value) : value,
+      [name]: numericFields.includes(name) ? (value === "" ? "" : Number(value)) : value,
     }));
+
     // Guardar el umbral en localStorage para que Probabilidades.jsx lo use
-    if (name === 'umbral_probabilidad') {
+    if (name === 'umbral_probabilidad' && value !== "") {
       localStorage.setItem('umbral_probabilidad', value);
     }
   };
