@@ -1,4 +1,3 @@
-import React from "react";
 
 const TableroRuleta = ({ handleNumeroClick }) => (
     <div className="bg-green-900 rounded-lg p-2 flex flex-col items-center justify-center max-w-[550px]  border-4 border-black shadow-xl" style={{ background: 'repeating-linear-gradient(135deg, #14532d 0 10px, #166534 10px 20px)' }}>

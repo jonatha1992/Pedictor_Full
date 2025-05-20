@@ -99,18 +99,16 @@ const Predict = () => {
     if (!isConfigReady) return;
     const fetchProbabilidades = async () => {
       if (numerosSeleccionados.length >= 8) {
-        try {
-          console.log("[Consulta] Enviando al backend:", {
-            numeros: numerosSeleccionados.slice(-8),
+        try {          console.log("[Consulta] Enviando al backend:", {
+            numeros: numerosSeleccionados, // Envía TODOS los números seleccionados
             parametros: {
-              numeros_anteriores: 8,
+              numeros_anteriores: 36, // Usar los últimos 36 números para predecir
               tipo_ruleta: gameConfig.tipo || "Electromecanica"
             }
-          });
-          const response = await axios.post("http://127.0.0.1:8000/api/games/predict/", {
-            numeros: numerosSeleccionados.slice(-8),
+          });          const response = await axios.post("http://127.0.0.1:8000/api/games/predict/", {
+            numeros: numerosSeleccionados, // Envía TODOS los números seleccionados
             parametros: {
-              numeros_anteriores: 8,
+              numeros_anteriores: 36, // Usar los últimos 36 números para predecir
               tipo_ruleta: gameConfig.tipo || "Electromecanica"
             }
           });
@@ -126,8 +124,7 @@ const Predict = () => {
       }
     };
     fetchProbabilidades();
-    // eslint-disable-next-line
-  }, [numerosSeleccionados, isConfigReady]);
+  }, [numerosSeleccionados, isConfigReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Actualiza historialPredecidos y numerosAJugar
   const actualizarListas = (predicciones) => {
