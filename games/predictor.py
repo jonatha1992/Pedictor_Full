@@ -113,14 +113,17 @@ def calcular_estadisticas_avanzadas(numeros, rango=36):
     return estadisticas
 
 
-class Predictor:
+class Predictor:    
+    
     def __init__(self, model_path, numeros_anteriores=10):
         self.model_path = model_path
         self.numeros_anteriores = numeros_anteriores
         self.model = tf.keras.models.load_model(model_path)
         self.label_encoder = LabelEncoder()
         
-        # Preparar el codificador de sectores    def predecir(self, numeros):
+        # Preparar el codificador de sectores
+        
+    def predecir(self, numeros):
         # Verificar que tengamos suficientes números
         if len(numeros) < self.numeros_anteriores:
             raise ValueError(f"Se requieren al menos {self.numeros_anteriores} números para predecir.")

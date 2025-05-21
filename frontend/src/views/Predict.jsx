@@ -98,18 +98,20 @@ const Predict = () => {
   useEffect(() => {
     if (!isConfigReady) return;
     const fetchProbabilidades = async () => {
-      if (numerosSeleccionados.length >= 8) {
-        try {          console.log("[Consulta] Enviando al backend:", {
-            numeros: numerosSeleccionados, // Envía TODOS los números seleccionados
+      if (numerosSeleccionados.length >= 10) {
+        try {
+          console.log("[Consulta] Enviando al backend:", {
+            numeros: numerosSeleccionados,
             parametros: {
-              numeros_anteriores: 36, // Usar los últimos 36 números para predecir
-              tipo_ruleta: gameConfig.tipo || "Electromecanica"
+              numeros_anteriores: 10, // Forzar 10
+              tipo_ruleta: "Electromecanica" // Forzar tipo
             }
-          });          const response = await axios.post("http://127.0.0.1:8000/api/games/predict/", {
-            numeros: numerosSeleccionados, // Envía TODOS los números seleccionados
+          });
+          const response = await axios.post("http://127.0.0.1:8000/api/games/predict/", {
+            numeros: numerosSeleccionados,
             parametros: {
-              numeros_anteriores: 36, // Usar los últimos 36 números para predecir
-              tipo_ruleta: gameConfig.tipo || "Electromecanica"
+              numeros_anteriores: 10,
+              tipo_ruleta: "Electromecanica"
             }
           });
           console.log("[Consulta] Respuesta del backend:", response.data);

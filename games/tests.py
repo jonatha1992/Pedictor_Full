@@ -9,18 +9,18 @@ from .predictor import Predictor
 
 @pytest.fixture
 def predictor():
-    model_path = os.path.join(os.path.dirname(__file__), 'ml', 'Model_Electromecanica_N8.keras')
-    numeros_anteriores = 8
+    model_path = os.path.join(os.path.dirname(__file__), 'ml', 'Model_Electromecanica_N10.keras')
+    numeros_anteriores = 10
     return Predictor(model_path, numeros_anteriores=numeros_anteriores)
 
 def test_prediccion_valida(predictor):
-    numeros = [1, 5, 12, 23, 8, 17, 29, 36]
+    numeros = [1, 5, 12, 23, 8, 17, 29, 36, 14, 7]  # 10 números
     probabilidades = predictor.predecir(numeros)
     assert len(probabilidades) == 37  # 37 números posibles (0-36)
     assert all(isinstance(p, float) or isinstance(p, np.floating) for p in probabilidades)
 
 def test_prediccion_con_pocos_numeros(predictor):
-    numeros = [1, 2, 3]  # Menos de 8
+    numeros = [1, 2, 3]  # Menos de 10
     with pytest.raises(ValueError):
         predictor.predecir(numeros)
 
@@ -29,9 +29,9 @@ def test_predict_endpoint_valido(db):
     client = APIClient()
     url = reverse('game-predict')
     data = {
-        "numeros": [1, 5, 12, 23, 8, 17, 29, 36],
+        "numeros": [1, 5, 12, 23, 8, 17, 29, 36, 14, 7],  # 10 números
         "parametros": {
-            "numeros_anteriores": 8,
+            "numeros_anteriores": 10,
             "tipo_ruleta": "Electromecanica"
         }
     }
@@ -46,7 +46,7 @@ def test_predict_endpoint_pocos_numeros(db):
     data = {
         "numeros": [1, 2, 3],
         "parametros": {
-            "numeros_anteriores": 8,
+            "numeros_anteriores": 10,
             "tipo_ruleta": "Electromecanica"
         }
     }
