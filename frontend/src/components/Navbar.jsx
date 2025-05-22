@@ -24,31 +24,31 @@ const Navbar = () => {
   };
 
   return (
-    <header className="relative flex items-center justify-between p-4 text-white border-b-2 border-green-700 shadow-2xl bg-gradient-to-br from-green-800 to-primary">
+    // Cambia p-4 por py-2 px-4 para reducir el alto
+    <header className="relative flex items-center justify-between py-2 px-4 text-white border-b-2 border-green-700 shadow-2xl bg-gradient-to-br from-green-800 to-primary min-h-[48px]">
       <div className="flex flex-col items-start flex-shrink-0">
         <a
           href={user ? "/predict" : "/"}
-          className="px-4 py-1 text-lg font-extrabold tracking-wide transition-colors border-2 rounded-full shadow-md drop-shadow-lg text-highlight hover:text-white bg-black/40 border-highlight"
+          // Reduce py-1 a py-0.5 y text-lg a text-base
+          className="px-4 py-0.5 text-base font-extrabold tracking-wide transition-colors border-2 rounded-full shadow-md drop-shadow-lg text-highlight hover:text-white bg-black/40 border-highlight"
           style={{ letterSpacing: '0.08em' }}
         >
           Spin Predictor
         </a>
-        {user && (
-          <span className="mt-1 text-xs font-semibold text-white/80 bg-black/30 px-3 py-1 rounded-full border border-highlight shadow-sm max-w-[180px] overflow-hidden text-ellipsis whitespace-nowrap">
-            {user.displayName || user.email}
-          </span>
-        )}
+
       </div>
       <div className="flex items-center gap-2 ml-auto">
         {/* Botón hamburguesa visible en mobile/tablet, oculto en desktop */}
         <button
-          className="flex flex-col items-center justify-center w-10 h-10 ml-2 rounded-lg lg:hidden focus:outline-none focus:ring-2 focus:ring-green-400"
+          // Reduce h-10 w-10 a h-8 w-8 y ml-2 a ml-1
+          className="flex flex-col items-center justify-center w-8 h-8 ml-1 rounded-lg lg:hidden focus:outline-none focus:ring-2 focus:ring-green-400"
           aria-label="Abrir menú"
           onClick={() => setMenuOpen(!menuOpen)}
         >
-          <span className={`block w-7 h-1 bg-white rounded transition-all duration-200 ${menuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
-          <span className={`block w-7 h-1 bg-white rounded my-1 transition-all duration-200 ${menuOpen ? 'opacity-0' : ''}`}></span>
-          <span className={`block w-7 h-1 bg-white rounded transition-all duration-200 ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
+          {/* Reduce w-7 h-1 a w-6 h-0.5 */}
+          <span className={`block w-6 h-0.5 bg-white rounded transition-all duration-200 ${menuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
+          <span className={`block w-6 h-0.5 bg-white rounded my-0.5 transition-all duration-200 ${menuOpen ? 'opacity-0' : ''}`}></span>
+          <span className={`block w-6 h-0.5 bg-white rounded transition-all duration-200 ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
         </button>
         {/* Menú horizontal en desktop, hamburguesa en mobile/tablet */}
         <nav className="">
@@ -104,7 +104,7 @@ const Navbar = () => {
           </ul>
           {/* Mobile/Tablet: menú hamburguesa */}
           {menuOpen && (
-            <ul className="absolute left-0 z-50 flex flex-col w-full p-4 mt-2 space-y-2 font-bold text-white bg-green-900 border-b-2 border-green-700 shadow-2xl top-full rounded-b-xl lg:hidden animate-fade-in-down">
+            <ul className="absolute left-0 z-50 flex flex-col w-full p-2 mt-1 space-y-2 font-bold text-white bg-green-900 border-b-2 border-green-700 shadow-2xl top-full rounded-b-xl lg:hidden animate-fade-in-down">
               {user && (
                 <li>
                   <Link to="/predict" className="flex items-center gap-2 px-4 py-2 border border-green-700 rounded-full shadow group bg-primary hover:bg-highlight" onClick={() => setMenuOpen(false)}>

@@ -281,7 +281,7 @@ const Predict = () => {
     // Establecer los datos de la alerta
     setAlertaInfo({ mensaje, visible: true, saliendo: false });
 
-    // Animar salida tras 3 segundos
+    // Animar salida tras 1 segundos
     setTimeout(() => {
       setAlertaInfo(prev => ({ ...prev, saliendo: true }));
 
@@ -291,7 +291,7 @@ const Predict = () => {
         // Marcar que ya no hay notificación en curso
         setNotificacionEnCurso(false);
       }, 500);
-    }, 3000);
+    }, 1000);
   };
 
   // Efecto para procesar la cola de notificaciones
@@ -385,7 +385,10 @@ const Predict = () => {
         const nuevosAciertosTot = prev.aciertos_totales + nuevosAciertos;
         const nuevosAciertosVecinosTot = prev.aciertos_vecinos + nuevosAciertosVecinos;
         // Efectividad: aciertos_totales / jugados * 100
-        const efectividad = nuevosJugadosTot > 0 ? `${Math.round((nuevosAciertosTot / nuevosJugadosTot) * 100)}` : "0";
+        // const efectividad = nuevosJugadosTot > 0 ? `${Math.round((nuevosAciertosTot / nuevosJugadosTot) * 100)}` : "0";
+
+        const efectividad = nuevosJugadosTot > 0 ? `${Math.round(((nuevosAciertosTot + nuevosAciertosVecinosTot) / nuevosJugadosTot) * 100)}`
+          : "0";
         return {
           ...prev,
           ingresados: nuevosIngresados,
