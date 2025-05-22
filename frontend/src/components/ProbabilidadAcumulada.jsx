@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ruletaImg from "../assets/ruleta.png";
 
 const ProbabilidadTabla = ({ historial, maxRepeticiones }) => {
@@ -72,16 +72,53 @@ const ProbabilidadTabla = ({ historial, maxRepeticiones }) => {
 
 
 
-
 const ProbabilidadAcumulada = ({ historial, maxRepeticiones, soloRuleta }) => {
+    // Estado para mostrar la imagen en grande
+    const [showBigImg, setShowBigImg] = useState(false);
+
     if (soloRuleta) {
         return (
-            <div className="flex flex-col items-center justify-center w-full h-full min-h-[180px]">
-                <div className="flex flex-col items-center justify-center min-w-[120px] max-w-[220px]">
-                    <img src={ruletaImg} alt="Ruleta" height={250} className="max-w-[220px] md:max-w-[180px] w-full border-green-700 shadow-lg" />
-                    <span className="mt-2 text-xs text-green-200">Ruleta y vecinos</span>
+            <>
+                <div
+                    className="flex flex-col items-center justify-center w-full h-full min-h-[180px]"
+                    onClick={() => setShowBigImg(true)}
+                    style={{ cursor: "zoom-in" }}
+                    title="Click para ver en grande"
+                >
+                    <div className="flex flex-col items-center justify-center min-w-[120px] max-w-[220px]">
+                        <img
+                            src={ruletaImg}
+                            alt="Ruleta"
+                            height={250}
+                            className="max-w-[220px] md:max-w-[180px] w-full border-green-700 shadow-lg"
+                        />
+                        <span className="mt-2 text-xs text-green-200">Ruleta y vecinos</span>
+                    </div>
                 </div>
-            </div>
+                {showBigImg && (
+                    <div
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
+                        onClick={() => setShowBigImg(false)}
+                        style={{ cursor: "zoom-out" }}
+                    >
+                        <img
+                            src={ruletaImg}
+                            alt="Ruleta grande"
+                            className="max-w-[90vw] max-h-[90vh] rounded-xl border-4 border-green-700 shadow-2xl animate-scale-in"
+                            onClick={() => setShowBigImg(false)}
+                        />
+                        <style>{`
+                            .animate-scale-in {
+                                animation: scaleInRuleta 0.18s cubic-bezier(.4,2,.6,1);
+                            }
+                            @keyframes scaleInRuleta {
+                                from { transform: scale(0.8); opacity: 0; }
+                                to { transform: scale(1); opacity: 1; }
+                            }
+                        `}</style>
+                    </div>
+                )}
+            </>
         );
     }
     return (

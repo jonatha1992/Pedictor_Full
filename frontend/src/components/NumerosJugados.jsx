@@ -23,7 +23,7 @@ const NumerosJugados = ({ numerosSeleccionados, aciertos = [], aciertosVecinos =
         }
     }, [numerosSeleccionados]);
     return (
-        <div className="flex flex-col h-full p-4 rounded">
+        <div className="flex flex-col h-full p-1 rounded">
             <div className="flex items-center justify-between w-full mb-1">
                 <h3 className="flex-1 pb-1 text-xl font-extrabold tracking-wide text-left text-green-200 uppercase border-b border-green-400">ÚLTIMOS RESULTADOS</h3>
                 <button

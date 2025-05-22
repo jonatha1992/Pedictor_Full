@@ -19,6 +19,56 @@ const iconos = {
     ),
 };
 
+// Componente reutilizable de confirmación (profesional)
+const ConfirmDialog = ({ open, mensaje, onConfirm, onCancel }) => {
+    const aceptarRef = React.useRef(null);
+
+    React.useEffect(() => {
+        if (open && aceptarRef.current) {
+            aceptarRef.current.focus();
+        }
+    }, [open]);
+
+    if (!open) return null;
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center transition-opacity bg-black bg-opacity-50 animate-fade-in">
+            <div className="w-full max-w-sm p-6 text-center bg-white border-2 border-green-700 shadow-2xl rounded-xl animate-scale-in">
+                <div className="flex flex-col items-center">
+                    <div className="mb-2">
+                        <svg className="w-12 h-12 mx-auto text-yellow-500" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" className="text-yellow-300 stroke-current" fill="#FEF9C3" />
+                            <path d="M12 8v4m0 4h.01" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                    </div>
+                    <div className="mb-4 text-lg font-semibold text-gray-800">{mensaje}</div>
+                    <div className="flex justify-center gap-4 mt-2">
+                        <button
+                            ref={aceptarRef}
+                            className="px-5 py-2 font-bold text-white transition bg-green-700 rounded-lg shadow hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-400"
+                            onClick={onConfirm}
+                        >
+                            Aceptar
+                        </button>
+                        <button
+                            className="px-5 py-2 font-bold text-gray-800 transition bg-gray-300 rounded-lg shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                            onClick={onCancel}
+                        >
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {/* Animaciones Tailwind personalizadas */}
+            <style>{`
+                .animate-fade-in { animation: fadeIn 0.18s ease; }
+                .animate-scale-in { animation: scaleIn 0.18s cubic-bezier(.4,2,.6,1); }
+                @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+                @keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+            `}</style>
+        </div>
+    );
+};
+
 const ConfiguracionJuego = ({
     isOpen,
     setIsOpen,
@@ -53,18 +103,24 @@ const ConfiguracionJuego = ({
         validar(e.target.name, e.target.value);
     };
 
-    // Nueva función para reinicio total
+    const [showConfirm, setShowConfirm] = useState(false);
+
+    // Nueva función para reinicio total usando ConfirmDialog
     const handleReiniciarTotal = () => {
-        if (window.confirm("¿Estás seguro que quieres reiniciar el juego? Se borrarán todos los números y estadísticas.")) {
-            if (typeof window.reiniciarJuegoTotal === 'function') {
-                window.reiniciarJuegoTotal();
-            }
-            if (typeof setIsModalOpen === 'function') setIsModalOpen(false);
-        }
+        setShowConfirm(true);
     };
+    const confirmarReinicio = () => {
+        setShowConfirm(false);
+        if (typeof window.reiniciarJuegoTotal === 'function') {
+            window.reiniciarJuegoTotal();
+        }
+        if (typeof setIsModalOpen === 'function') setIsModalOpen(false);
+    };
+    const cancelarReinicio = () => setShowConfirm(false);
 
     return (
         <>
+            {/* Modal solo para editar configuración */}
             <Modal isOpen={isModalOpen} onClose={null}>
                 <form onSubmit={handleSubmit} className="p-2 text-sm bg-white border border-gray-200 rounded-lg shadow-xl md:p-4 md:text-base">
                     <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-4">
@@ -119,32 +175,42 @@ const ConfiguracionJuego = ({
                     </div>
                     <button onClick={handleSaveConfig} type="submit" className="flex items-center justify-center w-full gap-2 py-2 mt-4 text-sm font-semibold text-white transition rounded shadow-lg bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 md:text-base">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></svg>
-                        Guardar Configuración
-                    </button>
-                    <button type="button" onClick={handleReiniciarTotal} className="flex items-center justify-center w-full gap-2 py-2 mt-2 text-sm font-semibold text-white transition rounded shadow-lg bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 md:text-base">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" /></svg>
-                        Reiniciar Juego (Total)
+                        Guardar Cambios
                     </button>
                 </form>
             </Modal>
+            {/* Confirmación personalizada para reinicio total */}
+            <ConfirmDialog
+                open={showConfirm}
+                mensaje="¿Estás seguro que quieres reiniciar el juego? Se borrarán todos los números y estadísticas."
+                onConfirm={confirmarReinicio}
+                onCancel={cancelarReinicio}
+            />
             {/* Config siempre visible en desktop, acordeón en mobile */}
             <div
                 className={`flex flex-col gap-1 mt-1 p-2 border border-green-700 bg-gradient-to-br to-green-900 md:p-2 rounded-xl w-full max-w-xs h-full md:h-full flex-1 mx-auto
                 ${(isOpen || window.innerWidth >= 768) ? 'flex' : 'hidden'} md:flex`}
+                style={{ fontSize: "15px" }}
             >
                 <h3 className="w-full pb-1 mb-1 text-lg font-extrabold tracking-wide text-center text-green-200 uppercase border-b border-green-400">Configuración Juego</h3>
-                <div className="flex flex-col gap-0.5 w-full flex-1 justify-center text-[13px] font-semibold text-white">
-                    <div className="flex items-center justify-between w-full"><span className="text-green-200">Tipo:</span> <span className="bg-green-700 px-2 py-0.5 rounded text-xs ml-2">{gameConfig.tipo}</span></div>
-                    <div className="flex items-center justify-between w-full"><span className="text-green-200">Ruleta:</span> <span className="bg-blue-700 px-2 py-0.5 rounded text-xs ml-2">{gameConfig.nombre_ruleta}</span></div>
-                    <div className="flex items-center justify-between w-full"><span className="text-green-200">Vecinos:</span> <span className="bg-pink-700 px-2 py-0.5 rounded text-xs ml-2">{gameConfig.cantidad_vecinos}</span></div>
-                    <div className="flex items-center justify-between w-full"><span className="text-green-200">Tardanza:</span> <span className="bg-yellow-700 px-2 py-0.5 rounded text-xs ml-2">{gameConfig.tardanza}</span></div>
-                    <div className="flex items-center justify-between w-full"><span className="text-green-200">Umbral:</span> <span className="bg-indigo-700 px-2 py-0.5 rounded text-xs ml-2">{gameConfig.umbral_probabilidad}%</span></div>
+                <div className="flex flex-col gap-0.5 w-full flex-1 justify-center font-semibold text-white">
+                    <div className="flex items-center justify-between w-full"><span className="text-green-200">Tipo:</span> <span className="bg-green-700 px-2 py-0.5 rounded text-sm ml-2">{gameConfig.tipo}</span></div>
+                    <div className="flex items-center justify-between w-full"><span className="text-green-200">Ruleta:</span> <span className="bg-blue-700 px-2 py-0.5 rounded text-sm ml-2">{gameConfig.nombre_ruleta}</span></div>
+                    <div className="flex items-center justify-between w-full"><span className="text-green-200">Vecinos:</span> <span className="bg-pink-700 px-2 py-0.5 rounded text-sm ml-2">{gameConfig.cantidad_vecinos}</span></div>
+                    <div className="flex items-center justify-between w-full"><span className="text-green-200">Tardanza:</span> <span className="bg-yellow-700 px-2 py-0.5 rounded text-sm ml-2">{gameConfig.tardanza}</span></div>
+                    <div className="flex items-center justify-between w-full"><span className="text-green-200">Umbral:</span> <span className="bg-indigo-700 px-2 py-0.5 rounded text-sm ml-2">{gameConfig.umbral_probabilidad}%</span></div>
                 </div>
+                {/* Botón para abrir modal de configuración */}
                 <button
-                    className="w-full p-1 text-xs font-bold text-white transition-all border border-green-700 rounded shadow bg-gradient-to-r from-green-600 to-green-900 hover:opacity-90"
-                    style={{ marginTop: "auto" }}
+                    className="w-full p-1 mt-2 text-xs font-bold text-white transition-all border border-green-700 rounded shadow bg-gradient-to-r from-blue-600 to-blue-900 hover:opacity-90"
                     onClick={() => setIsModalOpen(true)}>
-                    Reiniciar Juego
+                    Cambiar Configuración
+                </button>
+                {/* Botón para reiniciar total */}
+                <button
+                    className="w-full p-1 text-xs font-bold text-white transition-all border border-red-700 rounded shadow bg-gradient-to-r from-red-600 to-red-900 hover:opacity-90 "
+                    onClick={handleReiniciarTotal}>
+                    Reiniciar Juego (Total)
                 </button>
             </div>
         </>
