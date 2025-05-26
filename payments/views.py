@@ -4,11 +4,12 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.conf import settings
 from django.urls import reverse
-import mercadopago
 
 from subscriptions.models import SubscriptionPlan
 from subscriptions.utils import create_or_renew_subscription
 from .models import PaymentIntent
+from .serializers import PaymentIntentSerializer
+from .utils import get_mercadopago_sdk, verify_payment_with_mercadopago
 
 class CreatePaymentView(APIView):
     permission_classes = [IsAuthenticated]
@@ -24,8 +25,8 @@ class CreatePaymentView(APIView):
         except SubscriptionPlan.DoesNotExist:
             return Response({"error": "Plan de suscripción no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
-        # Initialize MercadoPago SDK
-        sdk = mercadopago.SDK(settings.MERCADOPAGO_ACCESS_TOKEN)
+        # Initialize MercadoPago SDK using utility function
+        sdk = get_mercadopago_sdk()
         
         # Create preference
         preference_data = {
@@ -73,10 +74,10 @@ class PaymentSuccessView(APIView):
     
     def get(self, request):
         payment_id = request.GET.get('payment_id')
-        status = request.GET.get('status')
+        status_param = request.GET.get('status')
         preference_id = request.GET.get('preference_id')
         
-        if not all([payment_id, status, preference_id]):
+        if not all([payment_id, status_param, preference_id]):
             return Response({"error": "Parámetros incompletos"}, status=status.HTTP_400_BAD_REQUEST)
             
         try:
@@ -88,12 +89,9 @@ class PaymentSuccessView(APIView):
         if payment_intent.status == 'approved':
             return Response({"message": "El pago ya fue procesado correctamente"})
             
-        # Initialize MercadoPago SDK
-        sdk = mercadopago.SDK(settings.MERCADOPAGO_ACCESS_TOKEN)
-        
         try:
             # Verify payment status with MercadoPago
-            payment_info = sdk.payment().get(payment_id)
+            payment_info = verify_payment_with_mercadopago(payment_id)
             payment_status = payment_info["response"]["status"]
             
             payment_intent.status = payment_status
@@ -120,3 +118,12 @@ class PaymentSuccessView(APIView):
             payment_intent.error_message = str(e)
             payment_intent.save()
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class UserPaymentsView(APIView):
+    """View to list all user payments"""
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        payments = PaymentIntent.objects.filter(user=request.user).order_by('-created_at')
+        serializer = PaymentIntentSerializer(payments, many=True)
+        return Response(serializer.data)

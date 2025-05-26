@@ -27,9 +27,13 @@ load_dotenv()
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+# MercadoPago configuration
+MERCADOPAGO_ACCESS_TOKEN = os.environ.get('MERCADOPAGO_ACCESS_TOKEN', '')
+MERCADOPAGO_SANDBOX = DEBUG  # Use sandbox in development mode
+MERCADOPAGO_PUBLIC_KEY = os.environ.get('MERCADOPAGO_PUBLIC_KEY', '')
 
 ALLOWED_HOSTS = []
 
@@ -46,9 +50,10 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_yasg',
     'users',
-    'licenses',
     'games',
     'reports',
+    'subscriptions',
+    'payments',
     # 'backend',  # Si ya migraste todo, puedes comentar o quitar backend
 ]
 
@@ -62,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'subscriptions.middleware.SubscriptionMiddleware',
     # 'backend.middleware.FirebaseAuthenticationMiddleware',  # habilitar para autenticar con firebase
 
 ]

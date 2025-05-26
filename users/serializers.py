@@ -3,10 +3,13 @@ from django.contrib.auth import get_user_model
 from .models import User
 
 class UserSerializer(serializers.ModelSerializer):
+    has_active_subscription = serializers.BooleanField(read_only=True)
+    subscription_info = serializers.JSONField(read_only=True)
+    
     class Meta:
         model = User
-        fields = ('id_user', 'email', 'name')
-        read_only_fields = ('id_user',)
+        fields = ('id_user', 'email', 'name', 'has_active_subscription', 'subscription_info')
+        read_only_fields = ('id_user', 'has_active_subscription', 'subscription_info')
 
 class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)

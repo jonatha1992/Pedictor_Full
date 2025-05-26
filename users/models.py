@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
+from django.utils import timezone
 
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None):
@@ -24,28 +25,32 @@ class User(AbstractBaseUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']
-
+    
     @property
-    def license_info(self):
+    def active_subscription(self):
+        """Returns the user's active subscription or None if no active subscription exists"""
         try:
-            user_license = self.user_license
-            return {
-                'key': user_license.license.key,
-                'expiration': user_license.valid_until,
-                'is_active': user_license.is_active,
-                'status': user_license.status
-            }
+            return self.subscriptions.filter(end_date__gt=timezone.now()).order_by('-end_date').first()
         except Exception:
             return None
-
+    
     @property
-    def has_active_license(self):
-        return hasattr(self, 'user_license') and self.user_license.is_active
-
+    def has_active_subscription(self):
+        """Returns True if the user has an active subscription"""
+        return self.active_subscription is not None
+    
     @property
-    def licenses(self):
-        from licenses.models import UserLicense
-        return UserLicense.objects.filter(user=self)
+    def subscription_info(self):
+        """Returns information about the user's active subscription"""
+        subscription = self.active_subscription
+        if subscription:
+            return {
+                'plan_name': subscription.plan.get_name_display(),
+                'start_date': subscription.start_date,
+                'end_date': subscription.end_date,
+                'is_active': subscription.is_active()
+            }
+        return None
 
     class Meta:
         db_table = 'users'

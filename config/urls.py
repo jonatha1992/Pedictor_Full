@@ -19,12 +19,12 @@ schema_view = get_schema_view(
 urlpatterns = [
     # Django admin
     path('admin/', admin.site.urls),
-    
-    # API endpoints
+      # API endpoints
     path('api/users/', include('users.urls')),
     path('api/games/', include('games.urls')),
-    path('api/licenses/', include('licenses.urls')),
     path('api/reports/', include('reports.urls')),
+    path('api/subscriptions/', include('subscriptions.urls')),
+    path('api/payments/', include('payments.urls')),
     
     # Swagger documentation
     path('api/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
