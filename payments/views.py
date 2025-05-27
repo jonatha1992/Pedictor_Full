@@ -42,10 +42,9 @@ class CreatePaymentView(APIView):
                 "success": request.build_absolute_uri(reverse('payment_success')),
                 "failure": request.build_absolute_uri(reverse('payment_failure')),
                 "pending": request.build_absolute_uri(reverse('payment_pending'))
-            },
-            "auto_return": "approved",
+            },            "auto_return": "approved",
             "binary_mode": True,  # Solo aprobado o rechazado, no pendiente
-            "external_reference": f"user_{request.user.id}_plan_{plan.id}"
+            "external_reference": f"user_{request.user.id_user}_plan_{plan.id}"
         }
         
         try:
