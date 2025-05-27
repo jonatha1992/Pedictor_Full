@@ -1,3 +1,0 @@
-@echo off
-echo Running tests for payments and subscriptions apps...
-python manage.py test payments subscriptions

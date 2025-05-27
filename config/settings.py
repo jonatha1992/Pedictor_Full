@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'reports',
     'subscriptions',
     'payments',
-    # 'backend',  # Si ya migraste todo, puedes comentar o quitar backend
 ]
 
 
