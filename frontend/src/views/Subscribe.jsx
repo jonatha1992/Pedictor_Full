@@ -13,18 +13,21 @@ const Subscribe = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Redirect to login if not authenticated
-        if (!isAuthenticated) {
-            navigate("/login", { state: { from: "/subscribe" } });
-            return;
-        }
-
-        // Fetch subscription plans
+        // Solo carga los planes, no redirige
         const fetchPlans = async () => {
             try {
                 setLoading(true);
                 const response = await axios.get("/api/subscriptions/plans/");
-                setPlans(response.data);
+                console.log("Planes de suscripción:", response.data);
+                if (Array.isArray(response.data)) {
+                    setPlans(response.data);
+                } else if (response.data && Array.isArray(response.data.results)) {
+                    setPlans(response.data.results);
+                } else if (response.data && Array.isArray(response.data.plans)) {
+                    setPlans(response.data.plans);
+                } else {
+                    setPlans([]);
+                }
                 setError(null);
             } catch (err) {
                 setError("Error al cargar los planes de suscripción.");
@@ -35,7 +38,7 @@ const Subscribe = () => {
         };
 
         fetchPlans();
-    }, [isAuthenticated, navigate]);
+    }, []);
 
     const handleSubscribe = async (planId) => {
         if (!isAuthenticated) {
@@ -74,8 +77,8 @@ const Subscribe = () => {
 
     if (loading && plans.length === 0) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-green-900 to-black">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
+            <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-black">
+                <div className="w-16 h-16 border-t-2 border-b-2 border-green-500 rounded-full animate-spin"></div>
             </div>
         );
     }
@@ -83,26 +86,35 @@ const Subscribe = () => {
     // Check if user already has an active subscription
     const hasActiveSubscription = user?.has_active_subscription;
 
+    // Si no hay planes, muestra un mensaje amigable
+    if (!plans || plans.length === 0) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-black">
+                <div className="p-4 text-center text-white bg-yellow-600 rounded-lg">No hay planes disponibles.</div>
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-green-900 to-black px-4 py-12">
+        <div className="flex flex-col items-center justify-center min-h-screen px-4 py-12 bg-gradient-to-br from-gray-900 via-green-900 to-black">
             <div className="w-full max-w-4xl">
-                <h1 className="text-4xl font-extrabold text-center text-white mb-10">
+                <h1 className="mb-10 text-4xl font-extrabold text-center text-white">
                     Planes de Suscripción
                 </h1>
 
                 {error && (
-                    <div className="bg-red-600 text-white p-4 rounded-lg mb-8 text-center">
+                    <div className="p-4 mb-8 text-center text-white bg-red-600 rounded-lg">
                         {error}
                     </div>
                 )}
 
                 {hasActiveSubscription && (
-                    <div className="bg-green-600 text-white p-4 rounded-lg mb-8 text-center">
+                    <div className="p-4 mb-8 text-center text-white bg-green-600 rounded-lg">
                         Ya tienes una suscripción activa hasta {new Date(user.subscription_info.end_date).toLocaleDateString()}
                     </div>
                 )}
 
-                <div className="grid md:grid-cols-3 gap-8">
+                <div className="grid gap-8 md:grid-cols-3">
                     {plans.map((plan) => {
                         const planName = plan.name === 'weekly'
                             ? 'Semanal'
@@ -120,21 +132,21 @@ const Subscribe = () => {
                             <div
                                 key={plan.id}
                                 className={`rounded-xl shadow-2xl border p-8 flex flex-col ${selectedPlan === plan.id
-                                        ? 'border-green-400 bg-gradient-to-br from-green-800 to-green-900'
-                                        : 'border-green-800 bg-gradient-to-br from-gray-800 to-gray-900'
+                                    ? 'border-green-400 bg-gradient-to-br from-green-800 to-green-900'
+                                    : 'border-green-800 bg-gradient-to-br from-gray-800 to-gray-900'
                                     }`}
                             >
-                                <h2 className="text-2xl font-bold text-green-400 mb-4">
+                                <h2 className="mb-4 text-2xl font-bold text-green-400">
                                     {planName}
                                 </h2>
-                                <div className="text-3xl font-bold text-white mb-6">
+                                <div className="mb-6 text-3xl font-bold text-white">
                                     {formatPrice(plan.price)}
                                 </div>
 
-                                <ul className="mb-8 flex-grow space-y-2">
+                                <ul className="flex-grow mb-8 space-y-2">
                                     {features.map((feature, index) => (
                                         <li key={index} className="flex items-center text-gray-300">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 text-green-500" viewBox="0 0 20 20" fill="currentColor">
                                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                             </svg>
                                             {feature}
@@ -145,7 +157,7 @@ const Subscribe = () => {
                                 <button
                                     onClick={() => handleSubscribe(plan.id)}
                                     disabled={loading}
-                                    className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 disabled:opacity-50"
+                                    className="w-full px-4 py-3 font-bold text-white transition duration-200 bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50"
                                 >
                                     {loading ? "Procesando..." : "Suscribirse"}
                                 </button>

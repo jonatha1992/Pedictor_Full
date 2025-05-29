@@ -1,13 +1,8 @@
 import pytest
-from django.urls import reverse
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
-from rest_framework import status
-from unittest.mock import patch, MagicMock
-from django.utils import timezone
 from datetime import timedelta
-
-from subscriptions.models import SubscriptionPlan, Subscription
+from subscriptions.models import SubscriptionPlan
 from payments.models import PaymentIntent
 from subscriptions.utils import create_or_renew_subscription
 
@@ -44,7 +39,8 @@ def payment_intent(db, user, subscription_plan):
     # Create a payment intent
     return PaymentIntent.objects.create(
         user=user,
-        plan=subscription_plan,        preference_id='test_preference_id',
+        plan=subscription_plan,        
+        preference_id='test_preference_id',
         status='pending',
         amount=subscription_plan.price
     )
