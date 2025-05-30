@@ -25,7 +25,9 @@ class Subscription(models.Model):
     end_date = models.DateTimeField()
     
     def __str__(self):
-        return f"{self.user.username} - {self.plan.name} ({self.is_active()})"
+        # Usa email o name si username no existe
+        user_display = getattr(self.user, 'username', None) or getattr(self.user, 'email', None) or getattr(self.user, 'name', 'Usuario')
+        return f"{user_display} - {self.plan.name} ({self.is_active()})"
     
     def is_active(self):
         return timezone.now() <= self.end_date

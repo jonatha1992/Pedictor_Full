@@ -2,9 +2,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Pricing = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,6 +38,17 @@ const Pricing = () => {
     };
     fetchPlans();
   }, []);
+
+  const handleSelectPlan = (planId) => {
+    // Si el usuario no está autenticado, redirige al login con información del plan
+    if (!isAuthenticated) {
+      console.log("Usuario no autenticado, redirigiendo a login");
+      navigate("/login", { state: { from: `/subscribe?plan=${planId}` } });
+    } else {
+      // Si está autenticado, redirige directamente a la página de suscripción
+      navigate(`/subscribe?plan=${planId}`);
+    }
+  };
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('es-AR', {
@@ -101,7 +114,7 @@ const Pricing = () => {
                   </ul>
                   <button
                     className="px-6 py-2 mt-2 text-lg font-extrabold tracking-wide transition-colors border-2 rounded-full shadow-xl bg-highlight text-primary hover:bg-white hover:text-secondary border-highlight"
-                    onClick={() => navigate(`/subscribe?plan=${plan.id}`)}
+                    onClick={() => handleSelectPlan(plan.id)}
                   >
                     Elegir plan
                   </button>

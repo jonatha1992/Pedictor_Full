@@ -9,6 +9,7 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 import { auth } from "../firebase";
+import axios from "axios";
 
 const authContext = createContext();
 
@@ -21,6 +22,7 @@ export const useAuth = () => {
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const signup = (email, password) => {
     return createUserWithEmailAndPassword(auth, email, password);
@@ -46,13 +48,34 @@ export function AuthProvider({ children }) {
     throw new Error("No authenticated user found");
   };
 
+  // Configurar interceptor para siempre incluir el token en las solicitudes
   useEffect(() => {
-    const unsubuscribe = onAuthStateChanged(auth, (currentUser) => {
+    const setupAxiosInterceptor = async () => {
+      axios.interceptors.request.use(
+        async (config) => {
+          if (auth.currentUser) {
+            const token = await auth.currentUser.getIdToken();
+            config.headers["Authorization"] = `Bearer ${token}`;
+          }
+          return config;
+        },
+        (error) => {
+          return Promise.reject(error);
+        }
+      );
+    };
+
+    setupAxiosInterceptor();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       console.log({ currentUser });
       setUser(currentUser);
+      setIsAuthenticated(!!currentUser);
       setLoading(false);
     });
-    return () => unsubuscribe();
+    return () => unsubscribe();
   }, []);
 
   return (
@@ -67,6 +90,7 @@ export function AuthProvider({ children }) {
         resetPassword,
         onAuthStateChanged,
         getUserToken,
+        isAuthenticated,
       }}
     >
       {children}

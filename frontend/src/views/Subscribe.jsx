@@ -1,6 +1,6 @@
 // src/views/Subscribe.jsx
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 
@@ -11,9 +11,23 @@ const Subscribe = () => {
     const [selectedPlan, setSelectedPlan] = useState(null);
     const { isAuthenticated, user } = useAuth();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     useEffect(() => {
-        // Solo carga los planes, no redirige
+        // Verificar autenticación primero
+        if (!isAuthenticated) {
+            console.log("Usuario no autenticado, redirigiendo a login");
+            navigate("/login", { state: { from: "/subscribe" } });
+            return;
+        }
+
+        // Obtener el plan_id de la URL si existe
+        const planIdFromURL = searchParams.get('plan');
+        if (planIdFromURL) {
+            setSelectedPlan(planIdFromURL);
+        }
+
+        // Cargar los planes
         const fetchPlans = async () => {
             try {
                 setLoading(true);
@@ -38,19 +52,25 @@ const Subscribe = () => {
         };
 
         fetchPlans();
-    }, []);
+
+        // Ya no se procesa automáticamente el pago al entrar, solo se selecciona el plan
+    }, [isAuthenticated, navigate, searchParams]);
 
     const handleSubscribe = async (planId) => {
         if (!isAuthenticated) {
-            navigate("/login", { state: { from: "/subscribe" } });
+            console.log("Usuario no autenticado, redirigiendo a login");
+            navigate("/login", { state: { from: `/subscribe?plan=${planId}` } });
             return;
         }
 
         try {
             setLoading(true);
+            console.log("Creando pago para el plan:", planId);
             const response = await axios.post("/api/payments/create-payment/", {
                 plan_id: planId,
             });
+
+            console.log("Respuesta del servidor:", response.data);
 
             // Redirect to MercadoPago checkout
             const { init_point, sandbox_init_point } = response.data;
@@ -58,13 +78,19 @@ const Subscribe = () => {
             // Use sandbox in development, production checkout in production
             const checkoutUrl = process.env.NODE_ENV === "production"
                 ? init_point
-                : sandbox_init_point;
+                : sandbox_init_point || init_point; // Fallback a init_point si sandbox_init_point no existe
 
+            console.log("Redirigiendo a:", checkoutUrl);
             window.location.href = checkoutUrl;
         } catch (err) {
-            setError("Error al procesar el pago.");
-            console.error("Error creating payment:", err);
-            setLoading(false);
+            if (err.response && err.response.status === 401) {
+                console.log("Error de autenticación, redirigiendo a login");
+                navigate("/login", { state: { from: `/subscribe?plan=${planId}` } });
+            } else {
+                setError("Error al procesar el pago: " + (err.response?.data?.error || err.message));
+                console.error("Error creating payment:", err);
+                setLoading(false);
+            }
         }
     };
 
