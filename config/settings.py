@@ -31,7 +31,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 DEBUG = True
 
 # MercadoPago configuration
-MERCADOPAGO_ACCESS_TOKEN = os.environ.get('MERCADOPAGO_ACCESS_TOKEN','')
+MERCADOPAGO_ACCESS_TOKEN = os.environ.get('MERCADOPAGO_ACCESS_VENDEDOR_TOKEN','')
 MERCADOPAGO_SANDBOX = DEBUG  # Use sandbox in development mode
 # El public key solo es necesario para Checkout API/Bricks, puedes dejarlo vacío o eliminarlo si no lo usas
 
