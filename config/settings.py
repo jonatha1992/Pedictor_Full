@@ -35,7 +35,10 @@ MERCADOPAGO_ACCESS_TOKEN = os.environ.get('MERCADOPAGO_ACCESS_VENDEDOR_TOKEN',''
 MERCADOPAGO_SANDBOX = DEBUG  # Use sandbox in development mode
 # El public key solo es necesario para Checkout API/Bricks, puedes dejarlo vacío o eliminarlo si no lo usas
 
-ALLOWED_HOSTS = []
+# URL base para development
+BASE_URL = 'http://localhost:8000' if DEBUG else 'https://tudominio.com'
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']  # Para desarrollo local
 
 
 # Application definition
