@@ -24,4 +24,5 @@ class PaymentIntent(models.Model):
     error_message = models.TextField(blank=True, null=True)
     
     def __str__(self):
-        return f"{self.user.username} - {self.plan.name} - {self.status}"
+        user_display = getattr(self.user, 'username', None) or getattr(self.user, 'email', None) or getattr(self.user, 'name', 'Usuario')
+        return f"{user_display} - {self.plan.name} - {self.status}"

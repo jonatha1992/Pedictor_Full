@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import googleLogo from "../assets/google.svg";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Alert } from "../components/Alert";
 
@@ -12,13 +12,18 @@ const Login = () => {
   const { login, loginWithGoogle, resetPassword } = useAuth();
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Obtener la ruta de redirección si existe
+  const from = location.state?.from || "/";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     try {
       await login(user.email, user.password);
-      navigate("/predict");
+      console.log("Login exitoso, redirigiendo a:", from);
+      navigate(from);
     } catch (error) {
       setError(error.message);
     }
@@ -30,7 +35,8 @@ const Login = () => {
   const handleGoogleSignin = async () => {
     try {
       await loginWithGoogle();
-      navigate("/");
+      console.log("Login con Google exitoso, redirigiendo a:", from);
+      navigate(from);
     } catch (error) {
       setError(error.message);
     }
@@ -96,7 +102,8 @@ const Login = () => {
           <div className="flex items-center justify-between">
             <div className="text-sm">
               <a
-                href="#"
+                href="#!"
+                onClick={handleResetPassword}
                 className="font-bold transition-colors text-highlight hover:text-white drop-shadow"
               >
                 ¿Olvidaste tu contraseña?
@@ -115,7 +122,7 @@ const Login = () => {
         </form>
         <button
           onClick={handleGoogleSignin}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 mt-2 font-bold transition-colors border-2 rounded-full shadow bg-white text-gray-800 border-gray-300 hover:bg-gray-100 hover:text-primary"
+          className="flex items-center justify-center w-full gap-2 px-4 py-2 mt-2 font-bold text-gray-800 transition-colors bg-white border-2 border-gray-300 rounded-full shadow hover:bg-gray-100 hover:text-primary"
         >
           <img src={googleLogo} alt="Google" className="w-6 h-6" />
           Iniciar sesión con Google

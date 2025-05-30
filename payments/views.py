@@ -28,7 +28,11 @@ class CreatePaymentView(APIView):
         # Initialize MercadoPago SDK using utility function
         sdk = get_mercadopago_sdk()
         
-        # Create preference
+        # Para desarrollo: usar URLs públicas de ejemplo para evitar error de Mercado Pago
+        success_url = "https://www.google.com"
+        failure_url = "https://www.google.com"
+        pending_url = "https://www.google.com"
+
         preference_data = {
             "items": [
                 {
@@ -39,18 +43,25 @@ class CreatePaymentView(APIView):
                 }
             ],
             "back_urls": {
-                "success": request.build_absolute_uri(reverse('payment_success')),
-                "failure": request.build_absolute_uri(reverse('payment_failure')),
-                "pending": request.build_absolute_uri(reverse('payment_pending'))
-            },            "auto_return": "approved",
+                "success": success_url,
+                "failure": failure_url,
+                "pending": pending_url
+            },
+            "auto_return": "approved",
             "binary_mode": True,  # Solo aprobado o rechazado, no pendiente
             "external_reference": f"user_{request.user.id_user}_plan_{plan.id}"
         }
         
         try:
             preference_response = sdk.preference().create(preference_data)
-            preference = preference_response["response"]
-            
+            preference = preference_response.get("response", {})
+            # Debug: log the full MercadoPago response if missing keys
+            if not all(k in preference for k in ("id", "init_point", "sandbox_init_point")):
+                return Response({
+                    "error": f"Respuesta inesperada de MercadoPago: {preference}",
+                    "raw_response": preference_response
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
             # Save payment intent
             payment_intent = PaymentIntent.objects.create(
                 user=request.user,
@@ -58,13 +69,13 @@ class CreatePaymentView(APIView):
                 preference_id=preference["id"],
                 amount=plan.price
             )
-            
+
             return Response({
                 "preference_id": preference["id"],
                 "init_point": preference["init_point"],
                 "sandbox_init_point": preference["sandbox_init_point"]
             })
-            
+
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
