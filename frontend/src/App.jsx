@@ -13,6 +13,7 @@ import Subscribe from "./views/Subscribe";
 import Contact from "./views/Contact";
 import Config from "./views/Config";
 import Terminos from "./views/Terminos";
+import PaymentTest from "./views/PaymentTest";
 
 const App = () => {
   const [paymentNotification, setPaymentNotification] = useState(null);
@@ -123,8 +124,7 @@ const App = () => {
         </div>
         )}
 
-        <Navbar />
-        <Routes>
+        <Navbar />        <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -133,6 +133,7 @@ const App = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/config" element={<Config />} />
           <Route path="/terminos" element={<Terminos />} />
+          <Route path="/payment-test" element={<PaymentTest />} />
         </Routes>
         <Footer />
       </div>
