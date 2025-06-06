@@ -121,63 +121,79 @@ const ConfiguracionJuego = ({
     return (
         <>
             {/* Modal solo para editar configuración */}
-            <Modal isOpen={isModalOpen} onClose={null}>
-                <form onSubmit={handleSubmit} className="p-2 text-sm bg-white border border-gray-200 rounded-lg shadow-xl md:p-4 md:text-base">
-                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-4">
-                        <div>
-                            <label className="flex items-center gap-2 text-xs font-semibold text-gray-800 md:text-sm">
-                                {iconos.tipo} Tipo de Ruleta
-                                <span className="text-gray-400 cursor-pointer" title="Ejemplo: Electromecánica. Elige el tipo de ruleta.">?</span>
-                            </label>
-                            <select
-                                name="tipo"
-                                value={gameConfig.tipo}
-                                onChange={onInputChange}
-                                className="block w-full p-2 mt-1 transition border border-gray-300 rounded focus:ring-2 focus:ring-green-400 focus:border-green-400"
-                                required
-                            >
-                                <option value="">Selecciona un tipo</option>
-                                <option value="Electromecanica">Electromecánica</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="flex items-center gap-2 text-xs font-semibold text-gray-800 md:text-sm">
-                                {iconos.nombre} Nombre de la Ruleta
-                                <span className="text-gray-400 cursor-pointer" title="Identifica tu ruleta.">?</span>
-                            </label>
-                            <input type="text" name="nombre_ruleta" value={gameConfig.nombre_ruleta} onChange={onInputChange} className={`block w-full p-2 mt-1 transition border ${errores.nombre_ruleta ? "border-red-500" : "border-gray-300"} rounded focus:ring-2 focus:ring-blue-400 focus:border-blue-400`} required />
-                            {errores.nombre_ruleta && <span className="text-xs text-red-500">{errores.nombre_ruleta}</span>}
-                        </div>
-                        <div>
-                            <label className="flex items-center gap-2 text-xs font-semibold text-gray-800 md:text-sm">
-                                {iconos.tardanza} Tardanza (jugadas)
-                                <span className="text-gray-400 cursor-pointer" title="Si un número no sale en este número de jugadas, su probabilidad se reinicia.">?</span>
-                            </label>
-                            <input type="number" name="tardanza" min="1" max="20" step="1" value={gameConfig.tardanza} placeholder="5" onChange={onInputChange} className={`block w-full p-2 mt-1 transition border ${errores.tardanza ? "border-red-500" : "border-gray-300"} rounded focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400`} required />
-                            {errores.tardanza && <span className="text-xs text-red-500">{errores.tardanza}</span>}
-                        </div>
-                        <div>
-                            <label className="flex items-center gap-2 text-xs font-semibold text-gray-800 md:text-sm">
-                                {iconos.vecinos} Cantidad de Vecinos
-                                <span className="text-gray-400 cursor-pointer" title="Números laterales considerados en la predicción.">?</span>
-                            </label>
-                            <input type="number" name="cantidad_vecinos" min="0" max="4" step="1" value={gameConfig.cantidad_vecinos} placeholder="1" onChange={onInputChange} className={`block w-full p-2 mt-1 transition border ${errores.cantidad_vecinos ? "border-red-500" : "border-gray-300"} rounded focus:ring-2 focus:ring-pink-400 focus:border-pink-400`} required />
-                            {errores.cantidad_vecinos && <span className="text-xs text-red-500">{errores.cantidad_vecinos}</span>}
-                        </div>
-                        <div className="md:col-span-2">
-                            <label className="flex items-center gap-2 text-xs font-semibold text-gray-800 md:text-sm">
-                                {iconos.umbral} Umbral de Probabilidad (%)
-                                <span className="text-gray-400 cursor-pointer" title="Probabilidad mínima (entera, sin decimales) para sugerir un número. Ejemplo: 50">?</span>
-                            </label>
-                            <input type="number" name="umbral_probabilidad" value={gameConfig.umbral_probabilidad} placeholder="50" onChange={onInputChange} min="1" max="100" step="1" className={`block w-full p-2 mt-1 transition border ${errores.umbral_probabilidad ? "border-red-500" : "border-gray-300"} rounded focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400`} required />
-                            {errores.umbral_probabilidad && <span className="text-xs text-red-500">{errores.umbral_probabilidad}</span>}
-                        </div>
-                    </div>
-                    <button onClick={handleSaveConfig} type="submit" className="flex items-center justify-center w-full gap-2 py-2 mt-4 text-sm font-semibold text-white transition rounded shadow-lg bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 md:text-base">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></svg>
-                        Guardar Cambios
+            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+                {/* Marco verde relativo para posicionar la X */}
+                <div className="relative">
+                    {/* Botón X para cerrar el modal, en el marco verde */}
+                    <button
+                        type="button"
+                        aria-label="Cerrar"
+                        onClick={() => setIsModalOpen(false)}
+                        className="absolute z-20 p-1 bg-gray-200 rounded-full top-2 right-2 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400"
+                        style={{ lineHeight: 0 }}
+                    >
+                        <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                            <line x1="18" y1="6" x2="6" y2="18" strokeLinecap="round" />
+                            <line x1="6" y1="6" x2="18" y2="18" strokeLinecap="round" />
+                        </svg>
                     </button>
-                </form>
+                    <form onSubmit={handleSubmit} className="p-2 text-sm bg-white border border-gray-200 rounded-lg shadow-xl md:p-4 md:text-base">
+                        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-4">
+                            <div>
+                                <label className="flex items-center gap-2 text-xs font-semibold text-gray-800 md:text-sm">
+                                    {iconos.tipo} Tipo de Ruleta
+                                    <span className="text-gray-400 cursor-pointer" title="Ejemplo: Electromecánica. Elige el tipo de ruleta.">?</span>
+                                </label>
+                                <select
+                                    name="tipo"
+                                    value={gameConfig.tipo}
+                                    onChange={onInputChange}
+                                    className="block w-full p-2 mt-1 transition border border-gray-300 rounded focus:ring-2 focus:ring-green-400 focus:border-green-400"
+                                    required
+                                >
+                                    <option value="">Selecciona un tipo</option>
+                                    <option value="Electromecanica">Electromecánica</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="flex items-center gap-2 text-xs font-semibold text-gray-800 md:text-sm">
+                                    {iconos.nombre} Nombre de la Ruleta
+                                    <span className="text-gray-400 cursor-pointer" title="Identifica tu ruleta.">?</span>
+                                </label>
+                                <input type="text" name="nombre_ruleta" value={gameConfig.nombre_ruleta} onChange={onInputChange} className={`block w-full p-2 mt-1 transition border ${errores.nombre_ruleta ? "border-red-500" : "border-gray-300"} rounded focus:ring-2 focus:ring-blue-400 focus:border-blue-400`} required />
+                                {errores.nombre_ruleta && <span className="text-xs text-red-500">{errores.nombre_ruleta}</span>}
+                            </div>
+                            <div>
+                                <label className="flex items-center gap-2 text-xs font-semibold text-gray-800 md:text-sm">
+                                    {iconos.tardanza} Tardanza (jugadas)
+                                    <span className="text-gray-400 cursor-pointer" title="Si un número no sale en este número de jugadas, su probabilidad se reinicia.">?</span>
+                                </label>
+                                <input type="number" name="tardanza" min="1" max="20" step="1" value={gameConfig.tardanza} placeholder="5" onChange={onInputChange} className={`block w-full p-2 mt-1 transition border ${errores.tardanza ? "border-red-500" : "border-gray-300"} rounded focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400`} required />
+                                {errores.tardanza && <span className="text-xs text-red-500">{errores.tardanza}</span>}
+                            </div>
+                            <div>
+                                <label className="flex items-center gap-2 text-xs font-semibold text-gray-800 md:text-sm">
+                                    {iconos.vecinos} Cantidad de Vecinos
+                                    <span className="text-gray-400 cursor-pointer" title="Números laterales considerados en la predicción.">?</span>
+                                </label>
+                                <input type="number" name="cantidad_vecinos" min="0" max="4" step="1" value={gameConfig.cantidad_vecinos} placeholder="1" onChange={onInputChange} className={`block w-full p-2 mt-1 transition border ${errores.cantidad_vecinos ? "border-red-500" : "border-gray-300"} rounded focus:ring-2 focus:ring-pink-400 focus:border-pink-400`} required />
+                                {errores.cantidad_vecinos && <span className="text-xs text-red-500">{errores.cantidad_vecinos}</span>}
+                            </div>
+                            <div className="md:col-span-2">
+                                <label className="flex items-center gap-2 text-xs font-semibold text-gray-800 md:text-sm">
+                                    {iconos.umbral} Umbral de Probabilidad (%)
+                                    <span className="text-gray-400 cursor-pointer" title="Probabilidad mínima (entera, sin decimales) para sugerir un número. Ejemplo: 50">?</span>
+                                </label>
+                                <input type="number" name="umbral_probabilidad" value={gameConfig.umbral_probabilidad} placeholder="50" onChange={onInputChange} min="1" max="100" step="1" className={`block w-full p-2 mt-1 transition border ${errores.umbral_probabilidad ? "border-red-500" : "border-gray-300"} rounded focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400`} required />
+                                {errores.umbral_probabilidad && <span className="text-xs text-red-500">{errores.umbral_probabilidad}</span>}
+                            </div>
+                        </div>
+                        <button onClick={handleSaveConfig} type="submit" className="flex items-center justify-center w-full gap-2 py-2 mt-4 text-sm font-semibold text-white transition rounded shadow-lg bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 md:text-base">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></svg>
+                            Guardar Cambios
+                        </button>
+                    </form>
+                </div>
             </Modal>
             {/* Confirmación personalizada para reinicio total */}
             <ConfirmDialog
