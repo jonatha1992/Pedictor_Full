@@ -28,7 +28,7 @@ const Navbar = () => {
     <header className="relative flex items-center justify-between py-2 px-4 text-white border-b-2 border-green-700 shadow-2xl bg-gradient-to-br from-green-800 to-primary min-h-[48px]">
       <div className="flex flex-col items-start flex-shrink-0">
         <a
-          href={user ? "/predict" : "/"}
+          href="/"
           // Reduce py-1 a py-0.5 y text-lg a text-base
           className="px-4 py-0.5 text-base font-extrabold tracking-wide transition-colors border-2 rounded-full shadow-md drop-shadow-lg text-highlight hover:text-white bg-black/40 border-highlight"
           style={{ letterSpacing: '0.08em' }}

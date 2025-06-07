@@ -123,18 +123,17 @@ const ConfiguracionJuego = ({
             {/* Modal solo para editar configuración */}
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 {/* Marco verde relativo para posicionar la X */}
-                <div className="relative">
-                    {/* Botón X para cerrar el modal, en el marco verde */}
+                <div className="relative">                    {/* Botón X para cerrar el modal, en el marco verde */}
                     <button
                         type="button"
                         aria-label="Cerrar"
                         onClick={() => setIsModalOpen(false)}
-                        className="absolute z-20 p-1 bg-gray-200 rounded-full top-2 right-2 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400"
+                        className="absolute z-20 p-1.5 bg-red-600 rounded-full -top-3 -right-3 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 shadow-md"
                         style={{ lineHeight: 0 }}
                     >
-                        <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                            <line x1="18" y1="6" x2="6" y2="18" strokeLinecap="round" />
-                            <line x1="6" y1="6" x2="18" y2="18" strokeLinecap="round" />
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                            <line x1="18" y1="6" x2="6" y2="18" strokeLinecap="round" strokeLinejoin="round" />
+                            <line x1="6" y1="6" x2="18" y2="18" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                     </button>
                     <form onSubmit={handleSubmit} className="p-2 text-sm bg-white border border-gray-200 rounded-lg shadow-xl md:p-4 md:text-base">
