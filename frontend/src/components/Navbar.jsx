@@ -104,40 +104,38 @@ const Navbar = () => {
           </ul>
           {/* Mobile/Tablet: menú hamburguesa */}
           {menuOpen && (
-            <ul className="absolute left-0 z-50 flex flex-col w-full p-2 mt-1 space-y-2 font-bold text-white bg-green-900 border-b-2 border-green-700 shadow-2xl top-full rounded-b-xl lg:hidden animate-fade-in-down">
-              {user && (
-                <li>
-                  <Link to="/predict" className="flex items-center gap-2 px-4 py-2 border border-green-700 rounded-full shadow group bg-primary hover:bg-highlight" onClick={() => setMenuOpen(false)}>
-                    <FaPlay className="text-yellow-300 transition-colors group-hover:text-black" />
-                    <span>Jugar</span>
-                  </Link>
-                </li>
-              )}
-              <li>
-                <Link to="/subscribe" className="flex items-center gap-2 px-4 py-2 border border-green-700 rounded-full shadow group bg-primary hover:bg-highlight" onClick={() => setMenuOpen(false)}>
+            <ul className="absolute left-0 z-50 flex flex-col w-full p-2 mt-1 space-y-2 font-bold text-white bg-green-900 border-b-2 border-green-700 shadow-2xl top-full rounded-b-xl lg:hidden animate-fade-in-down">              {user && (
+              <li className="w-full">
+                <Link to="/predict" className="flex items-center w-full gap-2 px-4 py-2 border border-green-700 rounded-full shadow group bg-primary hover:bg-highlight" onClick={() => setMenuOpen(false)}>
+                  <FaPlay className="text-yellow-300 transition-colors group-hover:text-black" />
+                  <span>Jugar</span>
+                </Link>
+              </li>
+            )}
+              <li className="w-full">
+                <Link to="/subscribe" className="flex items-center w-full gap-2 px-4 py-2 border border-green-700 rounded-full shadow group bg-primary hover:bg-highlight" onClick={() => setMenuOpen(false)}>
                   <FaCrown className="text-yellow-300 transition-colors group-hover:text-black" />
                   <span>Suscripción</span>
                 </Link>
               </li>
-              <li>
-                <Link to="/contact" className="flex items-center gap-2 px-4 py-2 border border-green-700 rounded-full shadow group bg-primary hover:bg-highlight" onClick={() => setMenuOpen(false)}>
+              <li className="w-full">
+                <Link to="/contact" className="flex items-center w-full gap-2 px-4 py-2 border border-green-700 rounded-full shadow group bg-primary hover:bg-highlight" onClick={() => setMenuOpen(false)}>
                   <FaEnvelope className="text-yellow-300 transition-colors group-hover:text-black" />
                   <span>Contacto</span>
                 </Link>
               </li>
               {user && (
-                <li>
-                  <Link to="/config" className="flex items-center gap-2 px-4 py-2 border border-green-700 rounded-full shadow group bg-primary hover:bg-highlight" onClick={() => setMenuOpen(false)}>
+                <li className="w-full">
+                  <Link to="/config" className="flex items-center w-full gap-2 px-4 py-2 border border-green-700 rounded-full shadow group bg-primary hover:bg-highlight" onClick={() => setMenuOpen(false)}>
                     <FaCog className="text-yellow-300 transition-colors group-hover:text-black" />
                     <span>Configuración</span>
                   </Link>
                 </li>
-              )}
-              <li>
+              )}<li className="w-full">
                 {user ? (
                   <button
                     onClick={() => { handleLogout(); setMenuOpen(false); }}
-                    className="flex items-center gap-2 px-4 py-2 border border-green-700 rounded-full shadow-md group bg-primary hover:bg-highlight"
+                    className="flex items-center w-full gap-2 px-4 py-2 border border-green-700 rounded-full shadow-md group bg-primary hover:bg-highlight"
                   >
                     <FaSignOutAlt className="text-yellow-300 transition-colors group-hover:text-black" />
                     {t("Logout")}
@@ -145,7 +143,7 @@ const Navbar = () => {
                 ) : (
                   <Link
                     to="/login"
-                    className="flex items-center gap-2 px-4 py-2 border border-green-700 rounded-full shadow-md group bg-primary hover:bg-highlight"
+                    className="flex items-center w-full gap-2 px-4 py-2 border border-green-700 rounded-full shadow-md group bg-primary hover:bg-highlight"
                     onClick={() => setMenuOpen(false)}
                   >
                     <FaSignInAlt className="text-yellow-300 transition-colors group-hover:text-black" />

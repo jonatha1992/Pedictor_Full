@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'reports',
     'subscriptions',
     'payments',
+    'contact',
 ]
 
 
@@ -194,3 +195,17 @@ SESSION_COOKIE_AGE = 86400  # 24 hours in seconds
 SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'  # Prevents CSRF
+
+# Email configuration
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Muestra los correos en la consola en lugar de enviarlos
+# Para desarrollo, esto es suficiente y no causa errores
+
+# La configuración de SMTP se puede habilitar en producción si decides enviar correos más adelante
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+# EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+
+# Remitente por defecto
+DEFAULT_FROM_EMAIL = 'Spin Predictor <noreply@spinpredictor.com>'
