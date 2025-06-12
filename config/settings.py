@@ -103,8 +103,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'predictor.db',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': "spinPredictor_test",
+        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'postgres'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
 
@@ -149,13 +153,8 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# # Serve index.html for all non-api routes
-# TEMPLATE_DIRS = [
-#     BASE_DIR / 'frontend' / 'dist'
-# ]
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -198,14 +197,6 @@ SESSION_COOKIE_SAMESITE = 'Lax'  # Prevents CSRF
 
 # Email configuration
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Muestra los correos en la consola en lugar de enviarlos
-# Para desarrollo, esto es suficiente y no causa errores
-
-# La configuración de SMTP se puede habilitar en producción si decides enviar correos más adelante
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
-# EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 
 # Remitente por defecto
 DEFAULT_FROM_EMAIL = 'Spin Predictor <noreply@spinpredictor.com>'
