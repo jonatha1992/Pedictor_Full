@@ -153,11 +153,7 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-
-
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 # Configuración de CORS
 CORS_ALLOW_ALL_ORIGINS = True  # Solo para desarrollo
