@@ -16,7 +16,7 @@ from datetime import timedelta
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-
+import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
@@ -97,24 +97,35 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "spinPredictor_test",
-        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'postgres'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+# DATABASE_URL config
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+print (f"Using DATABASE_URL: {DATABASE_URL}")
+
+if DATABASE_URL :
+    print(f"Using remote DATABASE_URL")
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL)
     }
-}
+else:
+    print(f"Using local PostgreSQL database")
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': "spinPredictor_test",
+            'USER': os.environ.get('POSTGRES_USER', 'postgres'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'postgres'),
+            # Use '127.0.0.1' instead of 'localhost' to avoid DNS resolution issues
+            'HOST': os.environ.get('POSTGRES_HOST', '127.0.0.1'),
+            'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+        }
+    }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -148,23 +159,26 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'frontend' / 'dist',  # Vite build output
-]
+
+# Check if frontend/dist directory exists before adding it to STATICFILES_DIRS
+frontend_dist_path = BASE_DIR / 'frontend' / 'dist'
+STATICFILES_DIRS = []
+if os.path.exists(frontend_dist_path):
+    STATICFILES_DIRS.append(frontend_dist_path)
+
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Configuración de CORS
-CORS_ALLOW_ALL_ORIGINS = True  # Solo para desarrollo
-CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_ALL_ORIGINS = True  # Solo para desarrollo
+# CORS_ALLOW_CREDENTIALS = True
 
 # Para producción, es mejor especificar los orígenes permitidos:
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:5174",
-#     "http://127.0.0.1:5174",
-# ]
-
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://*",
+]
 
 FIREBASE_CONFIG = os.path.join(BASE_DIR, 'key.json')
 
